@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".home.EditInfoActivity">
+
+    <FrameLayout
+        android:id="@+id/lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="정보 수정"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/submit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right"
+            android:text="저장"
+            android:textSize="16sp" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:layout_below="@+id/lay"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/gray_line"
+        android:padding="0dp"
+        android:textSize="0sp" />
+
+    <FrameLayout
+        android:id="@+id/edit_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView15"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_profile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/default_profile" />
+
+        <ImageView
+            android:id="@+id/ic_camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right|bottom"
+            android:src="@drawable/ic_photo_camera_black_24dp" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_nickname_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_profile_btn"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="닉네임 " />
+
+        <EditText
+            android:id="@+id/user_nickname"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:hint="익명"
+            android:maxLength="7"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <include
+        layout="@layout/view_loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</RelativeLayout>
