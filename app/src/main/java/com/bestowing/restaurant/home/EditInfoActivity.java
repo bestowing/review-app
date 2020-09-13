@@ -31,7 +31,7 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-//Todo: 닉네임 중복검사 필요 + 닉네임만 변경한 경우 or 사진만 변경한 경우
+//Todo: 닉네임 중복검사 필요 + 기본 프로필 사진으로 변경하기
 public class EditInfoActivity extends PhotoModuleActivity {
     private FirebaseFirestore db;
     private RelativeLayout loaderLyaout;
@@ -39,6 +39,8 @@ public class EditInfoActivity extends PhotoModuleActivity {
     private FirebaseUser user;
     private CircleImageView user_profile;
 
+    private boolean is_photo_exist = false;
+    private String exist_photoUrl;
     EditText user_nickname;
 
     @Override
@@ -77,12 +79,13 @@ public class EditInfoActivity extends PhotoModuleActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    String photoUrl = null;
+                    exist_photoUrl = null;
                     Uri uri = null;
                     try {
-                        photoUrl = document.get("photoUrl").toString();
-                        uri = Uri.parse(photoUrl);
+                        exist_photoUrl = document.get("photoUrl").toString();
+                        uri = Uri.parse(exist_photoUrl);
                     } catch (Exception ignored) {}
+                    if (uri != null) is_photo_exist = true;
                     user_nickname.setText(document.get("nickName").toString());
                     Glide.with(getApplicationContext()).load(uri).error(R.drawable.default_profile).into(user_profile);
                 }
@@ -94,8 +97,6 @@ public class EditInfoActivity extends PhotoModuleActivity {
         final String nickName = user_nickname.getText().toString().trim();
         storageRef = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        loaderLyaout.setVisibility(View.VISIBLE);
-
         if(nickName.length() > 0) {
             loaderLyaout.setVisibility(View.VISIBLE);
             if(photoUploaded) {
@@ -125,8 +126,13 @@ public class EditInfoActivity extends PhotoModuleActivity {
                     });
                 } catch (Exception e) {}
             } else {
-                UserInfo userInfo = new UserInfo(nickName, null);
-                upLoadInfo(userInfo);
+                if (is_photo_exist) {
+                    UserInfo userInfo = new UserInfo(nickName, exist_photoUrl);
+                    upLoadInfo(userInfo);
+                } else {
+                    UserInfo userInfo = new UserInfo(nickName, null);
+                    upLoadInfo(userInfo);
+                }
             }
         } else {
             showToast("닉네임을 입력해주세요.");
