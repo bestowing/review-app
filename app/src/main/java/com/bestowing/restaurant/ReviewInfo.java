@@ -1,12 +1,6 @@
 package com.bestowing.restaurant;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.firebase.ui.auth.data.model.User;
-
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
