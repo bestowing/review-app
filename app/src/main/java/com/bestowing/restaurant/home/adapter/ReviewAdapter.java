@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
     private ArrayList<ReviewInfo> mDataset;
     private Activity activity;
@@ -85,6 +87,16 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         CardView cardView = holder.cardView;
+        TextView writer_nickname = cardView.findViewById(R.id.writer_nickname);
+        CircleImageView writer_profile = cardView.findViewById(R.id.writer_profile);
+        writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
+        if (mDataset.get(position).getUserInfo().getPhotoUrl().equals("")) {
+            writer_profile.setImageResource(R.drawable.default_profile);
+        } else{
+            try {
+                Glide.with(activity).load(mDataset.get(position).getUserInfo().getPhotoUrl()).into(writer_profile);
+            } catch (Exception e) {}
+        }
         TextView user_comment = cardView.findViewById(R.id.user_comment);
         user_comment.setText(mDataset.get(position).getUserComment());
 

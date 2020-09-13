@@ -1,6 +1,8 @@
 package com.bestowing.restaurant;
 
-public class UserInfo {
+import java.io.Serializable;
+
+public class UserInfo implements Serializable {
     private String nickName;
     private String photoUrl;
 

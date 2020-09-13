@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.bestowing.restaurant.PhotoModuleActivity;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.UserInfo;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,10 +21,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 //Todo: 닉네임 중복검사 필요 + 닉네임만 변경한 경우 or 사진만 변경한 경우
 public class EditInfoActivity extends PhotoModuleActivity {
@@ -31,6 +37,7 @@ public class EditInfoActivity extends PhotoModuleActivity {
     private RelativeLayout loaderLyaout;
     private StorageReference storageRef;
     private FirebaseUser user;
+    private CircleImageView user_profile;
 
     EditText user_nickname;
 
@@ -43,7 +50,9 @@ public class EditInfoActivity extends PhotoModuleActivity {
         loaderLyaout = findViewById(R.id.loaderLyaout);
         findImageView(R.id.user_profile);
         findViewById(R.id.submit_btn).setOnClickListener(onClickListener);
+        user_profile = findViewById(R.id.user_profile);
         findViewById(R.id.edit_profile_btn).setOnClickListener(onClickListener);
+        setUserInfo();
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -59,6 +68,27 @@ public class EditInfoActivity extends PhotoModuleActivity {
             }
         }
     };
+
+    private void setUserInfo() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(user.getUid());
+        userRef.get(Source.SERVER).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String photoUrl = null;
+                    Uri uri = null;
+                    try {
+                        photoUrl = document.get("photoUrl").toString();
+                        uri = Uri.parse(photoUrl);
+                    } catch (Exception ignored) {}
+                    user_nickname.setText(document.get("nickName").toString());
+                    Glide.with(getApplicationContext()).load(uri).error(R.drawable.default_profile).into(user_profile);
+                }
+            }
+        });
+    }
 
     private void profileUpdate() {
         final String nickName = user_nickname.getText().toString().trim();
