@@ -1,16 +1,21 @@
 package com.bestowing.restaurant;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -19,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PhotoModuleActivity extends AppCompatActivity {
+    private final int MY_PERMISSIONS_REQUEST_CAMERA=1001;
     private final int REQUEST_TAKE_PHOTO = 1;
     private final int GET_GALLERY_IMAGE = 200;
 
@@ -57,6 +63,16 @@ public class PhotoModuleActivity extends AppCompatActivity {
 
     // 카메라로 촬영한 이미지를 처리함
     private void dispatchTakePictureIntent() {
+        // 권한 요청
+        int permssionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permssionCheck!= PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this,"권한 승인이 필요합니다",Toast.LENGTH_LONG).show();
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+            return ;
+        }
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -70,11 +86,31 @@ public class PhotoModuleActivity extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.restaurant_project.fileprovider",
+                        "com.bestowing.restaurant.provider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "카메라 권한이 승인되었어요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(this, "촬영한 사진을 리뷰에 올리기 위해서는 카메라 권한이 필요해요.", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
         }
     }
 

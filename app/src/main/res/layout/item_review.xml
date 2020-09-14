@@ -8,6 +8,7 @@
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
     android:layout_marginTop="10dp"
+    app:cardElevation="1dp"
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,7 +35,7 @@
             android:layout_marginRight="20dp"
             android:text="제목"
             android:textColor="@color/colorAccentBlack"
-            android:textSize="16sp"
+            android:textSize="23sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,10 +47,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
             android:text="닉네임"
-            android:textSize="12sp"
             android:textColor="@color/colorAccentBlack"
-            app:layout_constraintBottom_toBottomOf="@+id/writer_profile"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/createAtTextView"
             app:layout_constraintStart_toEndOf="@+id/writer_profile"
             app:layout_constraintTop_toTopOf="@+id/writer_profile" />
 
@@ -70,11 +72,13 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"
             android:gravity="start|top"
             android:inputType="textMultiLine"
             android:text="리뷰 내용"
-            android:textSize="12sp"
             android:textColor="@color/colorBaseBlack"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -85,12 +89,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="6dp"
             android:text="날짜"
             android:textColor="@color/colorAmbientBlack"
             android:textSize="10sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_comment" />
+            app:layout_constraintStart_toEndOf="@+id/writer_profile"
+            app:layout_constraintTop_toBottomOf="@+id/writer_nickname" />
 
         <LinearLayout
             android:id="@+id/contentsLayout"

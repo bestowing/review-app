@@ -80,7 +80,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 showPopup(view, viewHolder.getAdapterPosition());
             }
         });
-
         return viewHolder;
     }
 
@@ -92,18 +91,31 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
         if (mDataset.get(position).getUserInfo().getPhotoUrl().equals("")) {
             writer_profile.setImageResource(R.drawable.default_profile);
-        } else{
+        } else {
             try {
-                Glide.with(activity).load(mDataset.get(position).getUserInfo().getPhotoUrl()).into(writer_profile);
+                Glide.with(activity).load(mDataset.get(position).getUserInfo().getPhotoUrl()).error(R.drawable.default_profile).into(writer_profile);
             } catch (Exception e) {}
         }
         TextView title = cardView.findViewById(R.id.title);
-        title.setText(mDataset.get(position).getTitle());
-        TextView user_comment = cardView.findViewById(R.id.user_comment);
-        user_comment.setText(mDataset.get(position).getUserComment());
+        String _title = mDataset.get(position).getTitle();
+        if (_title.length() > 20) {
+            String summary = _title.substring(0, 19).concat("...");
+            title.setText(summary);
+        } else {
+            title.setText(_title);
+        }
 
+        TextView user_comment = cardView.findViewById(R.id.user_comment);
+        String comment = mDataset.get(position).getUserComment();
+        if (comment.length() > 30) {
+            String summary = comment.substring(0, 30).concat("...");
+            user_comment.setText(summary);
+        } else {
+            user_comment.setText(comment);
+        }
         TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
         createdAtTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedAt()));
+        /*
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ArrayList<String> contentsList = mDataset.get(position).getPhotos();
@@ -125,6 +137,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 }
             }
         }
+
+         */
     }
 
     @Override
