@@ -66,6 +66,24 @@
 
 
         <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="제목 (필수)" />
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:background="@drawable/input_form_round"
+            android:hint="제목"
+            android:ems="10"
+            android:gravity="start|top" />
+
+        <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +97,7 @@
             android:layout_marginBottom="10dp"
             android:padding="10dp"
             android:background="@drawable/input_form_round"
-            android:hint="방문한 음식점은 어땠나요?"
+            android:hint="방문한 음식점은 어땠나요? 자세히 쓸수록 다른 사람에게 도움이 돼요."
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine" />

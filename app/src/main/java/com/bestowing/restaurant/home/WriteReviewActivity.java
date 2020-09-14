@@ -39,6 +39,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
     private StorageReference storageRef;
     private ArrayList<Uri> mUri;
     private RelativeLayout loaderLayout;
+    private EditText title;
     private EditText user_comment;
 
     private ReviewInfo reviewInfo;
@@ -58,6 +59,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
 
         loaderLayout = findViewById(R.id.loaderLyaout);
         parent_root = findViewById(R.id.parent_root);
+        title = findViewById(R.id.title);
         user_comment = findViewById(R.id.user_comment);
 
         findViewById(R.id.picture_add_btn).setOnClickListener(onClickListener);
@@ -75,7 +77,6 @@ public class WriteReviewActivity extends PhotoModuleActivity {
                     chooseForPhoto();
                     break;
                 case R.id.submit_btn:
-                    // mData 목록을 보여줌
                     checkUpload();
                     break;
             }
@@ -148,71 +149,75 @@ public class WriteReviewActivity extends PhotoModuleActivity {
     }
 
     private void checkUpload() {
+        final String titleText = title.getText().toString();
         final String commentText = user_comment.getText().toString();
-
-        if(commentText.length() > 0) {
-            final ArrayList<String> photoList = new ArrayList<>(); // 파이어베이스에 업로드후 그 사진의 Uri를 문자열로 변환하여 저장함
-            loaderLayout.setVisibility(View.VISIBLE);
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // 유저 ID값 필요
-            FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-
-            final DocumentReference documentReference = reviewInfo == null ?
-                    firebaseFirestore.collection("reviews").document() :
-                    firebaseFirestore.collection("reviews").document(reviewInfo.getId());
-
-            final Date date = reviewInfo == null ?
-                    new Date() :
-                    reviewInfo.getCreatedAt();
-
-            // 사진을 올렸다가 삭제한 경우 -> 찾아서 삭제
-            // 사진을 올렸다가 수정한 경우 -> 그대로 덮어씌움
-
-            int Size = mUri.size();
-            if(Size == 0) { // 사진을 올리지 않았을 경우
-                ReviewInfo reviewInfo = new ReviewInfo(commentText, null, user.getUid(), date);
-                upLoadReview(documentReference, reviewInfo);
-                return;
-            }
-            for(int i=0; i<Size; i++) { // 사진이 하나라도 있을 경우
-                Uri uri = mUri.get(i);
-                if(uri.toString().contains("https://firebasestorage.googleapis.com/v0/b/restaurant-feb04.appspot.com/o/reviews")) {
-                    photoList.add(uri.toString());
-                    successCount++;
-                    if(mUri.size() == successCount){
-                        ReviewInfo reviewInfo = new ReviewInfo(commentText, photoList, user.getUid(), date);
-                        upLoadReview(documentReference, reviewInfo);
-                    }
-                }
-                String[] pathUri = uri.toString().split("\\.");
-                final StorageReference photoReference = storageRef.child("reviews/" + documentReference.getId() + "/" + i + "." + pathUri[pathUri.length - 1]);
-                try {
-                    UploadTask uploadTask = photoReference.putFile(uri);
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle unsuccessful uploads
-                            Log.d("test123", "에러: " + exception.toString());
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            photoReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    photoList.add(uri.toString());
-                                    successCount++;
-                                    if(mUri.size() == successCount){
-                                        ReviewInfo reviewInfo = new ReviewInfo(commentText, photoList, user.getUid(), date);
-                                        upLoadReview(documentReference, reviewInfo);
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } catch (Exception e) {}
-            }
-        } else {
+        if (titleText.length() == 0) {
+            showToast("제목을 적어도 한글자 이상 입력해주세요.");
+            return ;
+        }
+        if (commentText.length() == 0) {
             showToast("리뷰 내용을 적어도 한글자 이상 입력해주세요.");
+            return ;
+        }
+        final ArrayList<String> photoList = new ArrayList<>(); // 파이어베이스에 업로드후 그 사진의 Uri를 문자열로 변환하여 저장함
+        loaderLayout.setVisibility(View.VISIBLE);
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // 유저 ID값 필요
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+        final DocumentReference documentReference = reviewInfo == null ?
+                firebaseFirestore.collection("reviews").document() :
+                firebaseFirestore.collection("reviews").document(reviewInfo.getId());
+
+        final Date date = reviewInfo == null ?
+                new Date() :
+                reviewInfo.getCreatedAt();
+
+        // 사진을 올렸다가 삭제한 경우 -> 찾아서 삭제
+        // 사진을 올렸다가 수정한 경우 -> 그대로 덮어씌움
+
+        int Size = mUri.size();
+        if(Size == 0) { // 사진을 올리지 않았을 경우
+            ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, null, user.getUid(), date);
+            upLoadReview(documentReference, reviewInfo);
+            return;
+        }
+        for(int i=0; i<Size; i++) { // 사진이 하나라도 있을 경우
+            Uri uri = mUri.get(i);
+            if(uri.toString().contains("https://firebasestorage.googleapis.com/v0/b/restaurant-feb04.appspot.com/o/reviews")) {
+                photoList.add(uri.toString());
+                successCount++;
+                if(mUri.size() == successCount){
+                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, user.getUid(), date);
+                    upLoadReview(documentReference, reviewInfo);
+                }
+            }
+            String[] pathUri = uri.toString().split("\\.");
+            final StorageReference photoReference = storageRef.child("reviews/" + documentReference.getId() + "/" + i + "." + pathUri[pathUri.length - 1]);
+            try {
+                UploadTask uploadTask = photoReference.putFile(uri);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("test123", "에러: " + exception.toString());
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        photoReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                photoList.add(uri.toString());
+                                successCount++;
+                                if(mUri.size() == successCount){
+                                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, user.getUid(), date);
+                                    upLoadReview(documentReference, reviewInfo);
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (Exception e) {}
         }
     }
 
@@ -235,6 +240,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
 
     private void initReview() {
         if(reviewInfo != null) {
+            title.setText(reviewInfo.getTitle());
             user_comment.setText(reviewInfo.getUserComment());
             ArrayList<String> photoList = reviewInfo.getPhotos();
             if(photoList != null) {

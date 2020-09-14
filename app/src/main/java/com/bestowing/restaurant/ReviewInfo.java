@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ReviewInfo implements Serializable {
+    private String title;
     private String userComment;
     private ArrayList<String> photos;
     private UserInfo userInfo;
@@ -12,14 +13,8 @@ public class ReviewInfo implements Serializable {
     private Date createdAt;
     private String id;
 
-    public ReviewInfo(String userComment, ArrayList<String> photos, String writer, Date createdAt) {
-        this.userComment = userComment;
-        this.photos = photos;
-        this.writer = writer;
-        this.createdAt = createdAt;
-    }
-
-    public ReviewInfo(String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id) {
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id) {
+        this.title = title;
         this.userComment = userComment;
         this.photos = photos;
         this.userInfo = userInfo;
@@ -28,12 +23,29 @@ public class ReviewInfo implements Serializable {
         this.id = id;
     }
 
-    public ReviewInfo(String userComment, ArrayList<String> photos, String writer, Date createdAt, String id) {
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, String writer, Date createdAt, String id) {
+        this.title = title;
         this.userComment = userComment;
         this.photos = photos;
         this.writer = writer;
         this.createdAt = createdAt;
         this.id = id;
+    }
+
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, String writer, Date createdAt) {
+        this.title = title;
+        this.userComment = userComment;
+        this.photos = photos;
+        this.writer = writer;
+        this.createdAt = createdAt;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setUserInfo(UserInfo userInfo) { this.userInfo = userInfo; }
@@ -75,10 +87,6 @@ public class ReviewInfo implements Serializable {
     }
 
     public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return this.id;
     }
 }

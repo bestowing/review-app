@@ -71,14 +71,13 @@ public class HomeActivity extends AppCompatActivity {
     };
 
     public void logout() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        showToast("로그아웃에 성공했어요.");
-                        moveActivity(LoginActivity.class);
-                    }
-                });
+        AuthUI.getInstance().signOut(this)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            public void onComplete(@NonNull Task<Void> task) {
+                showToast("로그아웃에 성공했어요.");
+                moveActivity(LoginActivity.class);
+            }
+        });
     }
 
     private void moveActivity(Class c) {

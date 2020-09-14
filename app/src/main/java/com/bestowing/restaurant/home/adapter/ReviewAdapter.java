@@ -97,6 +97,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 Glide.with(activity).load(mDataset.get(position).getUserInfo().getPhotoUrl()).into(writer_profile);
             } catch (Exception e) {}
         }
+        TextView title = cardView.findViewById(R.id.title);
+        title.setText(mDataset.get(position).getTitle());
         TextView user_comment = cardView.findViewById(R.id.user_comment);
         user_comment.setText(mDataset.get(position).getUserComment());
 

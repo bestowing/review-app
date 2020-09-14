@@ -161,8 +161,8 @@ public class HomeFragment extends Fragment {
                                 ReviewInfo review;
                                 String writer = document.getData().get("writer").toString();
                                 if (userInfos.containsKey(writer)) { // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재함
-                                    //Log.d("test123", "넌 내가 알지");
                                     review = new ReviewInfo(
+                                            document.getData().get("title").toString(),
                                             document.getData().get("userComment").toString(),
                                             (ArrayList<String>) document.getData().get("photos"),
                                             userInfos.get(writer),
@@ -171,8 +171,8 @@ public class HomeFragment extends Fragment {
                                             document.getId());
                                     reviewList.add(review);
                                 } else {    // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재하지 않음 -> 일단 userinfo는 생략
-                                    //Log.d("test123", "모르눈 친구야");
                                     review = new ReviewInfo(
+                                            document.getData().get("title").toString(),
                                             document.getData().get("userComment").toString(),
                                             (ArrayList<String>) document.getData().get("photos"),
                                             writer,
