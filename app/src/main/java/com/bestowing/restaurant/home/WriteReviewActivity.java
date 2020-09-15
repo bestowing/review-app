@@ -32,6 +32,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WriteReviewActivity extends PhotoModuleActivity {
     private LinearLayout parent_root;
@@ -167,16 +169,17 @@ public class WriteReviewActivity extends PhotoModuleActivity {
                 firebaseFirestore.collection("reviews").document() :
                 firebaseFirestore.collection("reviews").document(reviewInfo.getId());
 
-        final Date date = reviewInfo == null ?
-                new Date() :
-                reviewInfo.getCreatedAt();
+        final Date date = reviewInfo == null ? new Date() : reviewInfo.getCreatedAt();
+
+        final Map<String, Boolean> like = reviewInfo == null ? null : reviewInfo.getLike();
+        final Long likeNum = reviewInfo == null ? 0 : reviewInfo.getLike_num();
 
         // 사진을 올렸다가 삭제한 경우 -> 찾아서 삭제
         // 사진을 올렸다가 수정한 경우 -> 그대로 덮어씌움
 
         int Size = mUri.size();
         if(Size == 0) { // 사진을 올리지 않았을 경우
-            ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, null, user.getUid(), date);
+            ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, null, null, user.getUid(), date, null, like, likeNum);
             upLoadReview(documentReference, reviewInfo);
             return;
         }
@@ -186,7 +189,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
                 photoList.add(uri.toString());
                 successCount++;
                 if(mUri.size() == successCount){
-                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, user.getUid(), date);
+                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, null, user.getUid(), date, null, like, likeNum);
                     upLoadReview(documentReference, reviewInfo);
                 }
             }
@@ -209,7 +212,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
                                 photoList.add(uri.toString());
                                 successCount++;
                                 if(mUri.size() == successCount){
-                                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, user.getUid(), date);
+                                    ReviewInfo reviewInfo = new ReviewInfo(titleText, commentText, photoList, null, user.getUid(), date, null, like, likeNum);
                                     upLoadReview(documentReference, reviewInfo);
                                 }
                             }

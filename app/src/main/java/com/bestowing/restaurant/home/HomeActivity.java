@@ -1,6 +1,7 @@
 package com.bestowing.restaurant.home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,17 +12,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.bestowing.restaurant.R;
+import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.auth.LoginActivity;
 import com.bestowing.restaurant.home.fragments.HomeFragment;
 import com.bestowing.restaurant.home.fragments.MyPageFragment;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 public class HomeActivity extends AppCompatActivity {
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();               // Auth 유저 정보
+    public FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();               // Auth 유저 정보
+    private UserInfo myInfo;
 
     public static HomeActivity mContext;
 
@@ -48,6 +57,8 @@ public class HomeActivity extends AppCompatActivity {
         my_page_btn = findViewById(R.id.my_page_btn);
         home_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn.setOnClickListener(bottomBarClickListener);
+
+        setMyInfo();
     }
 
     private View.OnClickListener bottomBarClickListener = new View.OnClickListener() {
@@ -84,6 +95,30 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, c);
         startActivity(intent);
         finish();
+    }
+
+    private void setMyInfo() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(user.getUid());
+        userRef.get(Source.SERVER).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    String photoUrl = null;
+                    String my_nickname = null;
+                    try {
+                        photoUrl = document.get("photoUrl").toString();
+                        my_nickname = document.get("nickName").toString();
+                    } catch (Exception ignored) {}
+                    myInfo = new UserInfo(my_nickname, photoUrl);
+                }
+            }
+        });
+    }
+
+    public UserInfo getMyInfo() {
+        return myInfo;
     }
 
     private void showToast(String msg) {
