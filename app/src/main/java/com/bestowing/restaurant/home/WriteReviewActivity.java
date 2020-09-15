@@ -108,11 +108,10 @@ public class WriteReviewActivity extends PhotoModuleActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception exception) {
-                                        showToast("파일을 삭제하는데 실패하였습니다.");
+                                        showToast("파일을 삭제하는데 실패하였습니다."); // TODO: 왜 실패하는데 잘 삭제되는지
                                     }
                                 });
                             }
-
                             mView.remove(index);
                             mUri.remove(index);
                             parent_root.removeView(view);
