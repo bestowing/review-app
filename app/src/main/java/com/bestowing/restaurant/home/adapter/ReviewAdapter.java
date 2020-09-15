@@ -2,6 +2,7 @@ package com.bestowing.restaurant.home.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -19,14 +21,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bestowing.restaurant.FirebaseHelper;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.ReviewInfo;
+import com.bestowing.restaurant.UserInfo;
+import com.bestowing.restaurant.Utility;
+import com.bestowing.restaurant.home.HomeActivity;
 import com.bestowing.restaurant.home.ReviewDetailActivity;
 import com.bestowing.restaurant.home.WriteReviewActivity;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -34,6 +52,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     private ArrayList<ReviewInfo> mDataset;
     private Activity activity;
     private FirebaseHelper firebaseHelper;
+    private String myId;
+    private Utility utility;
+    private final FirebaseFirestore db;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -43,10 +64,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         }
     }
 
-    public ReviewAdapter(Activity activity, ArrayList<ReviewInfo> myDataset) {
+    public ReviewAdapter(Activity activity, ArrayList<ReviewInfo> myDataset, String myId) {
         this.mDataset = myDataset;
         this.activity = activity;
-
+        this.myId = myId;
+        this.utility = new Utility();
+        db = FirebaseFirestore.getInstance();
         firebaseHelper = new FirebaseHelper(activity);
     }
 
@@ -80,41 +103,75 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 showPopup(view, viewHolder.getAdapterPosition());
             }
         });
+
+        /*
+        cardView.findViewById(R.id.like).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                like_click(mDataset.get(viewHolder.getAdapterPosition()).getId());
+            }
+        });
+
+         */
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         CardView cardView = holder.cardView;
         TextView writer_nickname = cardView.findViewById(R.id.writer_nickname);
         CircleImageView writer_profile = cardView.findViewById(R.id.writer_profile);
+        final ImageView like = cardView.findViewById(R.id.like);
+        final TextView likeNum = cardView.findViewById(R.id.like_num);
+        TextView title = cardView.findViewById(R.id.title);
+        //TextView user_comment = cardView.findViewById(R.id.user_comment);
+        TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
+        // 닉네임 세팅
         writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
-        if (mDataset.get(position).getUserInfo().getPhotoUrl().equals("")) {
+        // 프로필 사진 세팅
+        String photo_profile = mDataset.get(position).getUserInfo().getPhotoUrl();
+        // 프로필 사진을 설정하지 않았거나, 로딩중 에러가 발생하면 기본 사진으로 세팅
+        if (photo_profile.equals("")) {
             writer_profile.setImageResource(R.drawable.default_profile);
         } else {
             try {
-                Glide.with(activity).load(mDataset.get(position).getUserInfo().getPhotoUrl()).error(R.drawable.default_profile).into(writer_profile);
+                Glide.with(activity).load(photo_profile).error(R.drawable.default_profile).into(writer_profile);
             } catch (Exception e) {}
         }
-        TextView title = cardView.findViewById(R.id.title);
+        // 좋아요 버튼 세팅
+        if (mDataset.get(position).getLike() != null && mDataset.get(position).getLike().containsKey(myId)) {
+            like.setImageResource(R.drawable.ic_like);
+        }
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                like_click(mDataset.get(position).getId(), like, likeNum);
+            }
+        });
+        // 좋아요 숫자 세팅
+        likeNum.setText(Long.toString(mDataset.get(position).getLike_num()));
+        // 제목 세팅
         String _title = mDataset.get(position).getTitle();
-        if (_title.length() > 20) {
-            String summary = _title.substring(0, 19).concat("...");
+        // 제목이 너무 길면 ... 처리하기
+        if (_title.length() > 24) {
+            String summary = _title.substring(0, 24).concat("...");
             title.setText(summary);
         } else {
             title.setText(_title);
         }
-
-        TextView user_comment = cardView.findViewById(R.id.user_comment);
+        // 본문 세팅
+        /*
         String comment = mDataset.get(position).getUserComment();
+        // 본문 내용이 너무 길면 ... 처리하기
         if (comment.length() > 30) {
             String summary = comment.substring(0, 30).concat("...");
             user_comment.setText(summary);
         } else {
             user_comment.setText(comment);
         }
-        TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
-        createdAtTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedAt()));
+         */
+        // 타임스탬프 세팅
+        createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
         /*
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -167,6 +224,55 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.review, popup.getMenu());
         popup.show();
+    }
+
+    private void like_click(String reviewId, final ImageView ic_like, final TextView likeView) {
+        final DocumentReference sfDocRef = db.collection("reviews").document(reviewId);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Override
+            public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(sfDocRef);
+
+                Map<String, Boolean> like = (Map<String, Boolean>) snapshot.get("like");
+                long likeNum = snapshot.getLong("likeNum");
+                if (like == null) {
+                    like = new HashMap<String, Boolean>();
+                    like.put(myId, true);
+                    likeNum = 1;
+                    ic_like.setImageResource(R.drawable.ic_like);
+                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
+                } else if (like.containsKey(myId)) {
+                    like.remove(myId);
+                    likeNum -= 1;
+                    ic_like.setImageResource(R.drawable.ic_non_like);
+                    //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    like.put(myId, true);
+                    likeNum += 1;
+                    ic_like.setImageResource(R.drawable.ic_like);
+                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
+                }
+                likeView.setText(Long.toString(likeNum));
+                transaction.update(sfDocRef, "like", like);
+                transaction.update(sfDocRef, "likeNum", likeNum);
+
+                // Success
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("debugReviewAdapter", "좋아요 기능 성공");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("debugReviewAdapter", e.getMessage());
+                        Toast.makeText(activity, "좋아하지 못했을 수도 있어요.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void startNewActivity(Class c, ReviewInfo reviewInfo) {

@@ -3,6 +3,8 @@ package com.bestowing.restaurant;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReviewInfo implements Serializable {
     private String title;
@@ -12,8 +14,10 @@ public class ReviewInfo implements Serializable {
     private String writer;
     private Date createdAt;
     private String id;
+    private Map<String, Boolean> like;
+    private Long like_num;
 
-    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id) {
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long like_num) {
         this.title = title;
         this.userComment = userComment;
         this.photos = photos;
@@ -21,23 +25,8 @@ public class ReviewInfo implements Serializable {
         this.writer = writer;
         this.createdAt = createdAt;
         this.id = id;
-    }
-
-    public ReviewInfo(String title, String userComment, ArrayList<String> photos, String writer, Date createdAt, String id) {
-        this.title = title;
-        this.userComment = userComment;
-        this.photos = photos;
-        this.writer = writer;
-        this.createdAt = createdAt;
-        this.id = id;
-    }
-
-    public ReviewInfo(String title, String userComment, ArrayList<String> photos, String writer, Date createdAt) {
-        this.title = title;
-        this.userComment = userComment;
-        this.photos = photos;
-        this.writer = writer;
-        this.createdAt = createdAt;
+        this.like = like;
+        this.like_num = like_num;
     }
 
     public String getTitle() {
@@ -46,12 +35,6 @@ public class ReviewInfo implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setUserInfo(UserInfo userInfo) { this.userInfo = userInfo; }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
     }
 
     public String getUserComment() {
@@ -70,6 +53,14 @@ public class ReviewInfo implements Serializable {
         this.photos = photos;
     }
 
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
     public String getWriter() {
         return writer;
     }
@@ -79,7 +70,7 @@ public class ReviewInfo implements Serializable {
     }
 
     public Date getCreatedAt() {
-        return this.createdAt;
+        return createdAt;
     }
 
     public void setCreatedAt(Date createdAt) {
@@ -87,6 +78,26 @@ public class ReviewInfo implements Serializable {
     }
 
     public String getId() {
-        return this.id;
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Map<String, Boolean> getLike() {
+        return like;
+    }
+
+    public void setLike(Map<String, Boolean> like) {
+        this.like = like;
+    }
+
+    public long getLike_num() {
+        return like_num;
+    }
+
+    public void setLike_num(Long like_num) {
+        this.like_num = like_num;
     }
 }

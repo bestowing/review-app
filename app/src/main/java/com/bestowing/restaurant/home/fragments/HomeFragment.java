@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
 
         reviewList = new ArrayList<>();
         userInfos = new HashMap<>();
-        reviewAdapter = new ReviewAdapter(HomeActivity.mContext, reviewList);
+        reviewAdapter = new ReviewAdapter(HomeActivity.mContext, reviewList, HomeActivity.mContext.user.getUid());
         reviewAdapter.setOnReviewListener(onReviewListener);
 
         db = FirebaseFirestore.getInstance();
@@ -80,7 +80,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 int itemTotalCount = recyclerView.getAdapter().getItemCount() - 1;
                 if (lastVisibleItemPosition == itemTotalCount && isUpdating == false) {
@@ -168,16 +167,21 @@ public class HomeFragment extends Fragment {
                                             userInfos.get(writer),
                                             writer,
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getId());
+                                            document.getId(),
+                                            (Map<String, Boolean>)document.get("like"),
+                                            document.getLong("likeNum"));
                                     reviewList.add(review);
                                 } else {    // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재하지 않음 -> 일단 userinfo는 생략
                                     review = new ReviewInfo(
                                             document.getData().get("title").toString(),
                                             document.getData().get("userComment").toString(),
                                             (ArrayList<String>) document.getData().get("photos"),
+                                            null,
                                             writer,
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getId());
+                                            document.getId(),
+                                            (Map<String, Boolean>)document.get("like"),
+                                            document.getLong("likeNum"));
                                     reviewList.add(review);
                                     unknown.add(review);
                                     unknown_num++;
