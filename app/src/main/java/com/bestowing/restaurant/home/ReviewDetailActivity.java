@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.bestowing.restaurant.CommentInfo;
 import com.bestowing.restaurant.MyViewPager;
 import com.bestowing.restaurant.UserInfo;
+import com.bestowing.restaurant.Utility;
 import com.bestowing.restaurant.home.adapter.CommentAdapter;
 import com.bestowing.restaurant.home.adapter.ReviewAdapter;
 import com.bestowing.restaurant.home.adapter.ViewPagerAdapter;
@@ -50,6 +51,8 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ReviewDetailActivity extends AppCompatActivity {
+    private Utility utility;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String TAG = "ReviewDetailActivity";
     private FirebaseFirestore db;
 
@@ -67,12 +70,11 @@ public class ReviewDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.horizon_enter, R.anim.none);
         setContentView(R.layout.activity_review_detail);
+        utility = new Utility();
         comments_nbr = findViewById(R.id.comments_nbr);
         reviewInfo = (ReviewInfo)getIntent().getSerializableExtra("reviewInfo");
         if (reviewInfo.getPhotos() != null) {
             MyViewPager viewPager = findViewById(R.id.viewPager);
-            //viewPager.setClipToPadding(false);
-            //viewPager.setPageMargin(1px);
             viewPager.setPadding(1, 1, 1, 1);
             viewPager.setAdapter(new ViewPagerAdapter(this, reviewInfo.getPhotos()));
         }
@@ -86,6 +88,10 @@ public class ReviewDetailActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(commentAdapter);
 
+        ImageView like = findViewById(R.id.like);
+        if (reviewInfo.getLike() != null && reviewInfo.getLike().containsKey(user.getUid())) {
+            like.setImageResource(R.drawable.ic_like);
+        }
         TextView writer_nickname = findViewById(R.id.writer_nickname);
         writer_nickname.setText(reviewInfo.getUserInfo().getNickName());
         CircleImageView writer_profile = findViewById(R.id.writer_profile);
@@ -104,7 +110,7 @@ public class ReviewDetailActivity extends AppCompatActivity {
         userComment.setText(reviewInfo.getUserComment());
 
         TextView createdAt = findViewById(R.id.createAtTextView);
-        createdAt.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(reviewInfo.getCreatedAt()));
+        createdAt.setText(utility.calculateTimeStamp(reviewInfo.getCreatedAt()));
         ImageView ic_send = findViewById(R.id.ic_send);
         input_form = findViewById(R.id.input_form);
         ic_send.setOnClickListener(new View.OnClickListener() {
@@ -128,11 +134,14 @@ public class ReviewDetailActivity extends AppCompatActivity {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         final DocumentReference documentReference = firebaseFirestore.collection("reviews").document(reviewInfo.getId()); // 현재 리뷰의 아이디값을 받음
         final Date date = new Date();
-        CommentInfo commentInfo = new CommentInfo(comment, null, user.getUid(), date, null);
+        final CommentInfo commentInfo = new CommentInfo(comment, null, user.getUid(), date, null);
         documentReference.collection("comments").add(commentInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 showToast("댓글을 남겼어요.");
+                commentInfo.setUserInfo(HomeActivity.mContext.getMyInfo());
+                commentList.add(commentInfo);
+                completeUpdateSign();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

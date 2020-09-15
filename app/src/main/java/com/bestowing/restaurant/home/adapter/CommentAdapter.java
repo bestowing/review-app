@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bestowing.restaurant.CommentInfo;
 import com.bestowing.restaurant.FirebaseHelper;
 import com.bestowing.restaurant.R;
+import com.bestowing.restaurant.Utility;
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
@@ -28,6 +29,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     private ArrayList<CommentInfo> mDataset;
     private Activity activity;
     private FirebaseHelper firebaseHelper;
+    private Utility utility;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -41,6 +43,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         this.mDataset = mDataset;
         this.activity = activity;
         this.firebaseHelper = new FirebaseHelper(activity);
+        this.utility = new Utility();
     }
 
     /*
@@ -87,7 +90,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         String content = mDataset.get(position).getContent();
         contentView.setText(content);
         TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
-        createdAtTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedAt()));
+        createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
     }
 
     @Override
