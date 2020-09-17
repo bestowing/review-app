@@ -1,6 +1,9 @@
 package com.bestowing.restaurant;
 
 import android.app.Activity;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -8,19 +11,27 @@ import androidx.annotation.NonNull;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FirebaseHelper {
     private Activity activity;
     private OnReviewListener reviewListener;
     private int cnt;
+    private final FirebaseFirestore db;
 
     public FirebaseHelper(Activity activity) {
         this.activity = activity;
+        db = FirebaseFirestore.getInstance();
     }
 
     public void setOnPostListener(OnReviewListener reviewListener){
@@ -54,6 +65,54 @@ public class FirebaseHelper {
         } else {
             deleteStore(id, reviewInfo);
         }
+    }
+
+    private void clickLike(String reviewId, final ImageView ic_like, final TextView likeView) {
+        final DocumentReference sfDocRef = FirebaseFirestore.getInstance().collection("reviews").document(reviewId);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Override
+            public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(sfDocRef);
+
+                Map<String, Boolean> like = (Map<String, Boolean>) snapshot.get("like");
+                long likeNum = snapshot.getLong("likeNum");
+                if (like == null) {
+                    like = new HashMap<String, Boolean>();
+                    like.put(myId, true);
+                    likeNum = 1;
+                    ic_like.setImageResource(R.drawable.ic_like);
+                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
+                } else if (like.containsKey(myId)) {
+                    like.remove(myId);
+                    likeNum -= 1;
+                    ic_like.setImageResource(R.drawable.ic_non_like);
+                    //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    like.put(myId, true);
+                    likeNum += 1;
+                    ic_like.setImageResource(R.drawable.ic_like);
+                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
+                }
+                likeView.setText(Long.toString(likeNum));
+                transaction.update(sfDocRef, "like", like);
+                transaction.update(sfDocRef, "likeNum", likeNum);
+
+                // Success
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("debugReviewAdapter", "좋아요 기능 성공");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("debugReviewAdapter", e.getMessage());
+                        Toast.makeText(activity, "좋아하지 못했을 수도 있어요.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void deleteStore(final String id, final ReviewInfo reviewInfo) {
