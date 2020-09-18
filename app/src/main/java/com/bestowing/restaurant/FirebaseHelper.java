@@ -67,6 +67,7 @@ public class FirebaseHelper {
         }
     }
 
+    /*
     private void clickLike(String reviewId, final ImageView ic_like, final TextView likeView) {
         final DocumentReference sfDocRef = FirebaseFirestore.getInstance().collection("reviews").document(reviewId);
         db.runTransaction(new Transaction.Function<Void>() {
@@ -80,20 +81,20 @@ public class FirebaseHelper {
                     like = new HashMap<String, Boolean>();
                     like.put(myId, true);
                     likeNum = 1;
-                    ic_like.setImageResource(R.drawable.ic_like);
+                    //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 } else if (like.containsKey(myId)) {
                     like.remove(myId);
                     likeNum -= 1;
-                    ic_like.setImageResource(R.drawable.ic_non_like);
+                    //ic_like.setImageResource(R.drawable.ic_non_like);
                     //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
                 } else {
                     like.put(myId, true);
                     likeNum += 1;
-                    ic_like.setImageResource(R.drawable.ic_like);
+                    //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 }
-                likeView.setText(Long.toString(likeNum));
+                //likeView.setText(Long.toString(likeNum));
                 transaction.update(sfDocRef, "like", like);
                 transaction.update(sfDocRef, "likeNum", likeNum);
 
@@ -103,6 +104,7 @@ public class FirebaseHelper {
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                clickLike();
                 Log.d("debugReviewAdapter", "좋아요 기능 성공");
             }
         })
@@ -114,6 +116,8 @@ public class FirebaseHelper {
                     }
                 });
     }
+
+     */
 
     private void deleteStore(final String id, final ReviewInfo reviewInfo) {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();

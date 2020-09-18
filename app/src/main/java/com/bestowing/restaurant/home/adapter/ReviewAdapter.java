@@ -141,6 +141,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         // 좋아요 버튼 세팅
         if (mDataset.get(position).getLike() != null && mDataset.get(position).getLike().containsKey(myId)) {
             like.setImageResource(R.drawable.ic_like);
+        } else {
+            like.setImageResource(R.drawable.ic_non_like);
         }
         like.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,20 +242,20 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                     like = new HashMap<String, Boolean>();
                     like.put(myId, true);
                     likeNum = 1;
-                    ic_like.setImageResource(R.drawable.ic_like);
+                    //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 } else if (like.containsKey(myId)) {
                     like.remove(myId);
                     likeNum -= 1;
-                    ic_like.setImageResource(R.drawable.ic_non_like);
+                    //ic_like.setImageResource(R.drawable.ic_non_like);
                     //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
                 } else {
                     like.put(myId, true);
                     likeNum += 1;
-                    ic_like.setImageResource(R.drawable.ic_like);
+                    //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 }
-                likeView.setText(Long.toString(likeNum));
+                //likeView.setText(Long.toString(likeNum));
                 transaction.update(sfDocRef, "like", like);
                 transaction.update(sfDocRef, "likeNum", likeNum);
 

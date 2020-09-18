@@ -110,6 +110,10 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onModify() {}
+
+        @Override
+        public void onLike(ReviewInfo reviewInfo) {
+        }
     };
 
     private void storeUploader(String id){
