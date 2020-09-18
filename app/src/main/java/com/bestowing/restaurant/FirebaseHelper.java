@@ -67,8 +67,7 @@ public class FirebaseHelper {
         }
     }
 
-    /*
-    private void clickLike(String reviewId, final ImageView ic_like, final TextView likeView) {
+    public void clickLike(final String reviewId, final String myId) {
         final DocumentReference sfDocRef = FirebaseFirestore.getInstance().collection("reviews").document(reviewId);
         db.runTransaction(new Transaction.Function<Void>() {
             @Override
@@ -104,7 +103,7 @@ public class FirebaseHelper {
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                clickLike();
+                //reviewListener.onLike();
                 Log.d("debugReviewAdapter", "좋아요 기능 성공");
             }
         })
@@ -117,8 +116,6 @@ public class FirebaseHelper {
                 });
     }
 
-     */
-
     private void deleteStore(final String id, final ReviewInfo reviewInfo) {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         if (cnt == 0) {
@@ -129,7 +126,6 @@ public class FirebaseHelper {
                         public void onSuccess(Void aVoid) {
                             showToast("게시글을 삭제하였습니다.");
                             reviewListener.onDelete(reviewInfo);
-                            //postsUpdate();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
