@@ -172,7 +172,7 @@ public class WriteReviewActivity extends PhotoModuleActivity {
         final Date date = reviewInfo == null ? new Date() : reviewInfo.getCreatedAt();
 
         final Map<String, Boolean> like = reviewInfo == null ? null : reviewInfo.getLike();
-        final Long likeNum = reviewInfo == null ? 0 : reviewInfo.getLike_num();
+        final Long likeNum = reviewInfo == null ? 0 : reviewInfo.getLikeNum();
 
         // 사진을 올렸다가 삭제한 경우 -> 찾아서 삭제
         // 사진을 올렸다가 수정한 경우 -> 그대로 덮어씌움

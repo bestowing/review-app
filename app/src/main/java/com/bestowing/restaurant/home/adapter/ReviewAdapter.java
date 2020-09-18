@@ -104,15 +104,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             }
         });
 
-        /*
         cardView.findViewById(R.id.like).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                like_click(mDataset.get(viewHolder.getAdapterPosition()).getId());
+                firebaseHelper.clickLike(mDataset.get(viewHolder.getAdapterPosition()).getId(), myId);
             }
         });
 
-         */
         return viewHolder;
     }
 
@@ -144,14 +142,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         } else {
             like.setImageResource(R.drawable.ic_non_like);
         }
-        like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                like_click(mDataset.get(position).getId(), like, likeNum);
-            }
-        });
         // 좋아요 숫자 세팅
-        likeNum.setText(Long.toString(mDataset.get(position).getLike_num()));
+        likeNum.setText(Long.toString(mDataset.get(position).getLikeNum()));
         // 제목 세팅
         String _title = mDataset.get(position).getTitle();
         // 제목이 너무 길면 ... 처리하기
@@ -226,55 +218,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.review, popup.getMenu());
         popup.show();
-    }
-
-    private void like_click(String reviewId, final ImageView ic_like, final TextView likeView) {
-        final DocumentReference sfDocRef = db.collection("reviews").document(reviewId);
-
-        db.runTransaction(new Transaction.Function<Void>() {
-            @Override
-            public Void apply(Transaction transaction) throws FirebaseFirestoreException {
-                DocumentSnapshot snapshot = transaction.get(sfDocRef);
-
-                Map<String, Boolean> like = (Map<String, Boolean>) snapshot.get("like");
-                long likeNum = snapshot.getLong("likeNum");
-                if (like == null) {
-                    like = new HashMap<String, Boolean>();
-                    like.put(myId, true);
-                    likeNum = 1;
-                    //ic_like.setImageResource(R.drawable.ic_like);
-                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
-                } else if (like.containsKey(myId)) {
-                    like.remove(myId);
-                    likeNum -= 1;
-                    //ic_like.setImageResource(R.drawable.ic_non_like);
-                    //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
-                } else {
-                    like.put(myId, true);
-                    likeNum += 1;
-                    //ic_like.setImageResource(R.drawable.ic_like);
-                    //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
-                }
-                //likeView.setText(Long.toString(likeNum));
-                transaction.update(sfDocRef, "like", like);
-                transaction.update(sfDocRef, "likeNum", likeNum);
-
-                // Success
-                return null;
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("debugReviewAdapter", "좋아요 기능 성공");
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("debugReviewAdapter", e.getMessage());
-                        Toast.makeText(activity, "좋아하지 못했을 수도 있어요.", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     private void startNewActivity(Class c, ReviewInfo reviewInfo) {
