@@ -12,9 +12,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="30dp"
-        android:paddingBottom="30dp"/>
+        android:layout_alignParentTop="true"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navbar"

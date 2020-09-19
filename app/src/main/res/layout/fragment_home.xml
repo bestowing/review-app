@@ -15,6 +15,7 @@
             android:id="@+id/review_item_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:overScrollMode="never"
             android:paddingBottom="25dp"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
