@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bestowing.restaurant.home.adapter.ReviewAdapter;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,16 +35,16 @@ public class FirebaseHelper {
         db = FirebaseFirestore.getInstance();
     }
 
-    public void setOnPostListener(OnReviewListener reviewListener){
+    public void setOnPostListener(OnReviewListener reviewListener) {
         this.reviewListener = reviewListener;
     }
 
-    public void deleteStorage(final ReviewInfo reviewInfo){
+    public void deleteStorage(final ReviewInfo reviewInfo) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
         final String id = reviewInfo.getId();
         ArrayList<String> photoList = reviewInfo.getPhotos();
-        if(photoList != null) {
+        if (photoList != null) {
             int Size = photoList.size();
             for (int i = 0; i < Size; i++) {
                 String photo = photoList.get(i);
@@ -141,7 +142,7 @@ public class FirebaseHelper {
         Toast.makeText(this.activity, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private String storageUrlToName(String url){
+    private String storageUrlToName(String url) {
         return url.split("\\?")[0].split("%2F")[url.split("\\?")[0].split("%2F").length - 1];
     }
 }

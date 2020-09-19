@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +44,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment {
+    private int REQUEST_IS_REVIEW_ADDED = 1;
+
     private FirebaseFirestore db;
     private StorageReference storageRef;
     private ReviewAdapter reviewAdapter;
@@ -73,7 +78,7 @@ public class HomeFragment extends Fragment {
         storageRef = FirebaseStorage.getInstance().getReference();
 
         recyclerView = rootView.findViewById(R.id.review_item_view);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.mContext));
         recyclerView.setAdapter(reviewAdapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -141,7 +146,7 @@ public class HomeFragment extends Fragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.write_review_btn:
-                    startNewActivity(WriteReviewActivity.class);
+                    startNewActivityForResult(WriteReviewActivity.class);
                     break;
             }
         }
@@ -248,6 +253,25 @@ public class HomeFragment extends Fragment {
     private void startNewActivity(Class c) {
         Intent intent = new Intent(getContext(), c);
         startActivity(intent);
+    }
+
+    private void startNewActivityForResult(Class c) {
+        Intent intent = new Intent(getContext(), c);
+        startActivityForResult(intent, REQUEST_IS_REVIEW_ADDED);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IS_REVIEW_ADDED && resultCode == RESULT_OK) {
+            ReviewInfo reviewInfo = (ReviewInfo)data.getSerializableExtra("reviewInfo");
+            reviewInfo.setId(data.getStringExtra("reviewId"));
+            reviewInfo.setUserInfo(HomeActivity.mContext.getMyInfo());
+            reviewList.add(0, reviewInfo);
+            reviewAdapter.notifyItemInserted(0);
+            recyclerView.scrollToPosition(0);
+        }
     }
 
     private void showToast(String msg) {

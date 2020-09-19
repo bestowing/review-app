@@ -2,6 +2,7 @@ package com.bestowing.restaurant.home;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -223,12 +224,16 @@ public class WriteReviewActivity extends PhotoModuleActivity {
         }
     }
 
-    private void upLoadReview(DocumentReference documentReference, ReviewInfo reviewInfo) {
+    private void upLoadReview(final DocumentReference documentReference, final ReviewInfo reviewInfo) {
         documentReference.set(reviewInfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         showToast("리뷰를 정상적으로 등록했어요.");
+                        Intent intent = new Intent();
+                        intent.putExtra("reviewInfo", reviewInfo);
+                        intent.putExtra("reviewId", documentReference.getId());
+                        setResult(RESULT_OK, intent);
                         finish();
                     }
                 })
