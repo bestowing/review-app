@@ -7,4 +7,5 @@
     <color name="colorBaseBlack">#000000</color>
     <color name="colorAmbientBlack">#000000</color>
     <color name="colorLike">#ffb9bb</color>
+    <color name="navBackground">#f7fdff</color>
 </resources>
