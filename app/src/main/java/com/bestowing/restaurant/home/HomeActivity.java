@@ -8,10 +8,12 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.bestowing.restaurant.R;
+import com.bestowing.restaurant.ReviewInfo;
 import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.auth.LoginActivity;
 import com.bestowing.restaurant.home.fragments.HomeFragment;
@@ -29,12 +31,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
 public class HomeActivity extends AppCompatActivity {
+    private int REQUEST_IS_REVIEW_ADDED = 1;
+
     public FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();               // Auth 유저 정보
     private UserInfo myInfo;
 
     public static HomeActivity mContext;
 
     private ImageButton home_btn, category_btn, rank_btn, my_page_btn; // 하단바의 이미지 버튼
+    private ImageButton write_review_btn;
 
     private FragmentManager manager;
     private HomeFragment homeFragment;
@@ -57,6 +62,8 @@ public class HomeActivity extends AppCompatActivity {
         my_page_btn = findViewById(R.id.my_page_btn);
         home_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn.setOnClickListener(bottomBarClickListener);
+        write_review_btn = findViewById(R.id.write_review_btn);
+        write_review_btn.setOnClickListener(onClickListener);
 
         setMyInfo();
     }
@@ -80,6 +87,34 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     };
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.write_review_btn:
+                    startNewActivityForResult(WriteReviewActivity.class);
+                    break;
+            }
+        }
+    };
+
+    private void startNewActivityForResult(Class c) {
+        Intent intent = new Intent(mContext, c);
+        startActivityForResult(intent, REQUEST_IS_REVIEW_ADDED);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IS_REVIEW_ADDED && resultCode == RESULT_OK) {
+            ReviewInfo reviewInfo = (ReviewInfo)data.getSerializableExtra("reviewInfo");
+            reviewInfo.setId(data.getStringExtra("reviewId"));
+            reviewInfo.setUserInfo(mContext.getMyInfo());
+            homeFragment.reviewItemAdded(reviewInfo);
+        }
+    }
 
     public void logout() {
         AuthUI.getInstance().signOut(this)
