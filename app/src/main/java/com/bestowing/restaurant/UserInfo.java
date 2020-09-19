@@ -11,6 +11,8 @@ public class UserInfo implements Serializable {
         this.photoUrl = photoUrl;
     }
 
+    public UserInfo() {}
+
     public String getNickName() {
         return nickName;
     }
