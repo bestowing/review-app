@@ -120,7 +120,10 @@ public class HomeFragment extends Fragment {
             reviewList.get(position).like(is_like);
             reviewList.get(position).addLike(HomeActivity.mContext.user.getUid(), is_like);
             reviewAdapter.notifyItemChanged(position);
-            showToast("좋아요!");
+            if (is_like)
+                showToast("좋아요!");
+            else
+                showToast("좋아요를 취소해요.");
         }
     };
 

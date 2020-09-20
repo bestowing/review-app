@@ -95,6 +95,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_comment" />
 
+    <com.pm10.library.CircleIndicator
+        android:id="@+id/circle_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPager"
+        app:layout_constraintEnd_toEndOf="@+id/viewPager"
+        app:layout_constraintStart_toStartOf="@+id/viewPager"
+        app:p_defaultColor="@color/white"
+        app:p_gap="4dp"
+        app:p_radius="4dp"
+        app:p_selectedColor="@color/gray"
+        app:p_strokeColor="@color/gray"
+        app:p_strokeWidth="1dp" />
+
     <ImageView
         android:id="@+id/like"
         android:layout_width="25dp"

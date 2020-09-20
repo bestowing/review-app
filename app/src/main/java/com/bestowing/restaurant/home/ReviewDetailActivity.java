@@ -40,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.pm10.library.CircleIndicator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +78,8 @@ public class ReviewDetailActivity extends AppCompatActivity {
             MyViewPager viewPager = findViewById(R.id.viewPager);
             viewPager.setPadding(1, 1, 1, 1);
             viewPager.setAdapter(new ViewPagerAdapter(this, reviewInfo.getPhotos()));
+            CircleIndicator circleIndicator = findViewById(R.id.circle_indicator);
+            circleIndicator.setupWithViewPager(viewPager);
         }
         db = FirebaseFirestore.getInstance();
         commentList = new ArrayList<>();
