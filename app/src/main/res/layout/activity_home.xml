@@ -88,9 +88,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:padding="20dp"
-        android:elevation="3dp"
+        android:elevation="5dp"
         android:background="@drawable/navbar_write_review"
-        android:layout_marginBottom="30dp">
+        android:layout_marginBottom="15dp"
+        tools:targetApi="lollipop">
 
         <ImageButton
             android:id="@+id/write_review_btn"
@@ -102,8 +103,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_write_review"
-            tools:targetApi="lollipop" />
+            app:srcCompat="@drawable/ic_write_review"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

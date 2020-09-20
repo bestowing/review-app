@@ -118,6 +118,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="10sp"
+            android:includeFontPadding="false"
             android:textColor="@color/colorLike"
             app:layout_constraintEnd_toEndOf="@+id/like"
             app:layout_constraintStart_toStartOf="@+id/like"

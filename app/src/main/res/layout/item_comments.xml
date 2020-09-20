@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp">
+        android:padding="15dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile"
@@ -23,11 +23,13 @@
             android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="4dp"
             android:text="닉네임"
+            android:includeFontPadding="false"
             android:textColor="@color/colorAccentBlack"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/profile"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,10 +37,11 @@
             android:id="@+id/createAtTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:text="날짜"
             android:textColor="@color/colorAmbientBlack"
+            android:includeFontPadding="false"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/profile"
             app:layout_constraintTop_toBottomOf="@+id/nickname" />
@@ -47,13 +50,16 @@
             android:id="@+id/content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="4dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/colorBaseBlack"
             android:text="댓글 내용이 무진장러ㅗㅜㄴ아로ㅜㄴ야ㅕ롱녀로녀오ㅕ옹녀ㅗ령놔ㅕ오랴ㅕ노ㅑㅕㄱㄷ러ㅏ오하ㅓ옿아려호sdfuihfuiodhfusdhfudhsdfiudghfuiydshgfㅕ가홍가"
+            android:textSize="10sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/nickname"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/nickname" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,10 +2,7 @@ package com.bestowing.restaurant.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.home.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
