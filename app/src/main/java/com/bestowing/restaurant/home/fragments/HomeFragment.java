@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
                 int itemTotalCount = recyclerView.getAdapter().getItemCount() - 1;
-                if (lastVisibleItemPosition == itemTotalCount && isUpdating == false) {
+                if (lastVisibleItemPosition == itemTotalCount && !isUpdating) {
                     reviewUpdates();
                 }
             }

@@ -19,6 +19,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bestowing.restaurant.FirebaseHelper;
+import com.bestowing.restaurant.MyViewPager;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.ReviewInfo;
 import com.bestowing.restaurant.UserInfo;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
+import com.pm10.library.CircleIndicator;
 
 import org.w3c.dom.Text;
 
@@ -97,12 +99,23 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             }
         });
 
+        cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopup(v, viewHolder.getAdapterPosition());
+                return false;
+            }
+        });
+
+        /*
         cardView.findViewById(R.id.imageView2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopup(view, viewHolder.getAdapterPosition());
             }
         });
+
+         */
 
         cardView.findViewById(R.id.like).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +138,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         TextView title = cardView.findViewById(R.id.title);
         //TextView user_comment = cardView.findViewById(R.id.user_comment);
         TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
+
+        /*
         // 닉네임 세팅
         writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
         // 프로필 사진 세팅
@@ -137,6 +152,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 Glide.with(activity).load(photo_profile).error(R.drawable.default_profile).into(writer_profile);
             } catch (Exception e) {}
         }
+         */
         // 좋아요 버튼 세팅
         if (mDataset.get(position).getLike() != null && mDataset.get(position).getLike().containsKey(myId)) {
             like.setImageResource(R.drawable.ic_like);
@@ -166,7 +182,20 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         }
          */
         // 타임스탬프 세팅
-        createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
+        //createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
+        ArrayList<String> photos = mDataset.get(position).getPhotos();
+        MyViewPager viewPager = cardView.findViewById(R.id.viewPager);
+        if (viewPager.getTag() == null || !viewPager.getTag().equals(photos)) {
+            viewPager.setTag(photos);
+            viewPager.removeAllViews();
+            if (photos != null) {
+                viewPager.setPadding(0, 1, 0, 1);
+                viewPager.setAdapter(new ViewPagerAdapter(activity, photos));
+                CircleIndicator circleIndicator = cardView.findViewById(R.id.circle_indicator);
+                circleIndicator.setupWithViewPager(viewPager);
+            }
+        }
+
         /*
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
