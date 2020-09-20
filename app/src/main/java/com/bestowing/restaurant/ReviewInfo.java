@@ -3,6 +3,7 @@ package com.bestowing.restaurant;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReviewInfo implements Serializable {
@@ -108,8 +109,12 @@ public class ReviewInfo implements Serializable {
     }
 
     public void addLike(String myId, boolean is_like) {
-        if (is_like)
+        if (is_like) {
+            if (this.like == null) {
+                this.like = new HashMap<>();
+            }
             this.like.put(myId, true);
+        }
         else
             this.like.remove(myId);
     }

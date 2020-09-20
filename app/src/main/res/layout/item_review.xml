@@ -8,8 +8,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp">
 
+        <!--
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/writer_profile"
             android:layout_width="45dp"
@@ -20,23 +22,6 @@
             android:src="@drawable/default_profile"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="제목"
-            android:textColor="@color/colorAccentBlack"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/like"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/writer_profile" />
 
         <TextView
             android:id="@+id/writer_nickname"
@@ -73,18 +58,48 @@
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/writer_profile"
             app:layout_constraintTop_toBottomOf="@+id/writer_nickname" />
+        -->
 
-        <LinearLayout
-            android:id="@+id/contentsLayout"
+        <view
+            android:id="@+id/viewPager"
+            class="com.bestowing.restaurant.MyViewPager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/createAtTextView"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/writer_profile"/>
 
-        </LinearLayout>
+        <com.pm10.library.CircleIndicator
+            android:id="@+id/circle_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/viewPager"
+            app:layout_constraintEnd_toEndOf="@+id/viewPager"
+            app:layout_constraintStart_toStartOf="@+id/viewPager"
+            app:p_defaultColor="@color/white"
+            app:p_gap="4dp"
+            app:p_radius="4dp"
+            app:p_selectedColor="@color/gray"
+            app:p_strokeColor="@color/gray"
+            app:p_strokeWidth="1dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="제목"
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/like"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewPager" />
 
         <ImageView
             android:id="@+id/like"
