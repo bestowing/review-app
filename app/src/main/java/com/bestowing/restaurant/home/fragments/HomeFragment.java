@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bestowing.restaurant.R;
@@ -77,6 +78,7 @@ public class HomeFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.review_item_view);
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.mContext));
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         recyclerView.setAdapter(reviewAdapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -114,7 +116,11 @@ public class HomeFragment extends Fragment {
         public void onModify() {}
 
         @Override
-        public void onLike(ReviewInfo reviewInfo) {
+        public void onLike(int position, boolean is_like) {
+            reviewList.get(position).like(is_like);
+            reviewList.get(position).addLike(HomeActivity.mContext.user.getUid(), is_like);
+            reviewAdapter.notifyItemChanged(position);
+            showToast("좋아요!");
         }
     };
 
@@ -148,7 +154,6 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            Log.d("test123", "기존 리뷰 개수: " + review_size);
                             int unknown_num = 0;
                             ArrayList<ReviewInfo> unknown = new ArrayList<>(); // 알 수 없는 유저의 아이디 -> reviewList의 인덱스
                             for (QueryDocumentSnapshot document : task.getResult()) {

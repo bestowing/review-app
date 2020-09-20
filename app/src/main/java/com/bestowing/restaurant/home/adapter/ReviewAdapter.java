@@ -107,7 +107,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         cardView.findViewById(R.id.like).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.clickLike(mDataset.get(viewHolder.getAdapterPosition()).getId(), myId);
+                int position = viewHolder.getAdapterPosition();
+                firebaseHelper.clickLike(mDataset.get(position).getId(), myId, position);
             }
         });
 

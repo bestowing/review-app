@@ -99,4 +99,18 @@ public class ReviewInfo implements Serializable {
     public void setLikeNum(Long likeNum) {
         this.likeNum = likeNum;
     }
+
+    public void like(boolean is_like) {
+        if (is_like)
+            this.likeNum++;
+        else
+            this.likeNum--;
+    }
+
+    public void addLike(String myId, boolean is_like) {
+        if (is_like)
+            this.like.put(myId, true);
+        else
+            this.like.remove(myId);
+    }
 }

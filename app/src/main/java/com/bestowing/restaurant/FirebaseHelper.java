@@ -29,6 +29,7 @@ public class FirebaseHelper {
     private OnReviewListener reviewListener;
     private int cnt;
     private final FirebaseFirestore db;
+    private boolean is_like;
 
     public FirebaseHelper(Activity activity) {
         this.activity = activity;
@@ -68,7 +69,7 @@ public class FirebaseHelper {
         }
     }
 
-    public void clickLike(final String reviewId, final String myId) {
+    public void clickLike(final String reviewId, final String myId, final int position) {
         final DocumentReference sfDocRef = FirebaseFirestore.getInstance().collection("reviews").document(reviewId);
         db.runTransaction(new Transaction.Function<Void>() {
             @Override
@@ -81,16 +82,19 @@ public class FirebaseHelper {
                     like = new HashMap<String, Boolean>();
                     like.put(myId, true);
                     likeNum = 1;
+                    is_like = true;
                     //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 } else if (like.containsKey(myId)) {
                     like.remove(myId);
                     likeNum -= 1;
+                    is_like = false;
                     //ic_like.setImageResource(R.drawable.ic_non_like);
                     //Toast.makeText(activity, "좋아요를 취소했어요.", Toast.LENGTH_SHORT).show();
                 } else {
                     like.put(myId, true);
                     likeNum += 1;
+                    is_like = true;
                     //ic_like.setImageResource(R.drawable.ic_like);
                     //Toast.makeText(activity, "좋아요!", Toast.LENGTH_SHORT).show();
                 }
@@ -104,7 +108,7 @@ public class FirebaseHelper {
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                //reviewListener.onLike();
+                reviewListener.onLike(position, is_like);
                 Log.d("debugReviewAdapter", "좋아요 기능 성공");
             }
         })
@@ -112,7 +116,7 @@ public class FirebaseHelper {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d("debugReviewAdapter", e.getMessage());
-                        Toast.makeText(activity, "좋아하지 못했을 수도 있어요.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "오류가 발생했어요.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -5,5 +5,5 @@ import com.bestowing.restaurant.ReviewInfo;
 public interface OnReviewListener {
     void onDelete(ReviewInfo reviewInfo);
     void onModify();
-    void onLike(ReviewInfo reviewInfo);
+    void onLike(int position, boolean is_like);
 }
