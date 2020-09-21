@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +63,7 @@ public class ReviewDetailActivity extends AppCompatActivity {
     private TextView comments_nbr;
     private RecyclerView recyclerView;
     private ArrayList<CommentInfo> commentList;
+    private ArrayList<String> tagList;
     private HashMap<String, UserInfo> userInfos;
     private ReviewInfo reviewInfo;
     private int downloadCnt;
@@ -89,6 +91,32 @@ public class ReviewDetailActivity extends AppCompatActivity {
         }
         db = FirebaseFirestore.getInstance();
         commentList = new ArrayList<>();
+        // 태그
+        tagList = reviewInfo.getTags();
+        TextView tag1 = findViewById(R.id.tag1);
+        TextView tag2 = findViewById(R.id.tag2);
+        TextView tag3 = findViewById(R.id.tag3);
+        if (tagList != null) {
+            int tagSize = tagList.size();
+            switch (tagSize) {
+                case 3:
+                    String tag3Content = "#" + tagList.get(2);
+                    tag3.setText(tag3Content);
+                    tag3.setPaintFlags(tag3.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag3.setVisibility(View.VISIBLE);
+                case 2:
+                    String tag2Content = "#" + tagList.get(1);
+                    tag2.setText(tag2Content);
+                    tag2.setPaintFlags(tag2.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag2.setVisibility(View.VISIBLE);
+                case 1:
+                    String tag1Content = "#" + tagList.get(0);
+                    tag1.setText(tag1Content);
+                    tag1.setPaintFlags(tag1.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag1.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
         userInfos = new HashMap<>();
         commentAdapter = new CommentAdapter(commentList, this);
         // 댓글정보 받아오기
