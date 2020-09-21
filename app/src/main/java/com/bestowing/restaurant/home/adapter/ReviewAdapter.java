@@ -59,7 +59,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     private Utility utility;
     private final FirebaseFirestore db;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ViewHolder(CardView v) {
             super(v);
@@ -90,16 +90,24 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     public ReviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review, parent, false);
         final ViewHolder viewHolder = new ViewHolder(cardView);
+        MyViewPager myViewPager = cardView.findViewById(R.id.viewPager);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.getFragmentManager();
+                //activity.getFragmentManager();
                 Intent intent = new Intent(activity, ReviewDetailActivity.class);
                 intent.putExtra("reviewInfo", mDataset.get(viewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
             }
         });
-
+        myViewPager.setOnItemClickListener(new MyViewPager.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(activity, ReviewDetailActivity.class);
+                intent.putExtra("reviewInfo", mDataset.get(viewHolder.getAdapterPosition()));
+                activity.startActivity(intent);
+            }
+        });
         cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -107,7 +115,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 return false;
             }
         });
-
         /*
         cardView.findViewById(R.id.imageView2).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,9 +122,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 showPopup(view, viewHolder.getAdapterPosition());
             }
         });
-
          */
-
         cardView.findViewById(R.id.like).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +130,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 firebaseHelper.clickLike(mDataset.get(position).getId(), myId, position);
             }
         });
-
         return viewHolder;
     }
 
@@ -139,6 +143,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         TextView title = cardView.findViewById(R.id.title);
         //TextView user_comment = cardView.findViewById(R.id.user_comment);
         TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
+        MyViewPager viewPager = cardView.findViewById(R.id.viewPager);
         TextView tag1 = cardView.findViewById(R.id.tag1);
         TextView tag2 = cardView.findViewById(R.id.tag2);
         TextView tag3 = cardView.findViewById(R.id.tag3);
@@ -188,7 +193,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         //createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
         // 사진 뷰페이저 세팅
         ArrayList<String> photos = mDataset.get(position).getPhotos();
-        MyViewPager viewPager = cardView.findViewById(R.id.viewPager);
         if (viewPager.getTag() == null || !viewPager.getTag().equals(photos)) {
             viewPager.setTag(photos);
             viewPager.removeAllViews();
