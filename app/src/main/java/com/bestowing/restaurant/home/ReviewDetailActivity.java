@@ -74,12 +74,18 @@ public class ReviewDetailActivity extends AppCompatActivity {
         utility = new Utility();
         comments_nbr = findViewById(R.id.comments_nbr);
         reviewInfo = (ReviewInfo)getIntent().getSerializableExtra("reviewInfo");
-        if (reviewInfo.getPhotos() != null) {
+        ArrayList<String> photos = null;
+        try {
+            photos = reviewInfo.getPhotos();
+        } catch (NullPointerException ignored) {}
+        if (photos != null) {
             MyViewPager viewPager = findViewById(R.id.viewPager);
             viewPager.setPadding(1, 1, 1, 1);
             viewPager.setAdapter(new ViewPagerAdapter(this, reviewInfo.getPhotos()));
-            CircleIndicator circleIndicator = findViewById(R.id.circle_indicator);
-            circleIndicator.setupWithViewPager(viewPager);
+            if (photos.size() >= 2) {
+                CircleIndicator circleIndicator = findViewById(R.id.circle_indicator);
+                circleIndicator.setupWithViewPager(viewPager);
+            }
         }
         db = FirebaseFirestore.getInstance();
         commentList = new ArrayList<>();
