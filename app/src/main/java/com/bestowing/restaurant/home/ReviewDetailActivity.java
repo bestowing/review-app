@@ -1,33 +1,28 @@
 package com.bestowing.restaurant.home;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bestowing.restaurant.CommentInfo;
 import com.bestowing.restaurant.MyViewPager;
+import com.bestowing.restaurant.R;
+import com.bestowing.restaurant.ReviewInfo;
 import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.Utility;
 import com.bestowing.restaurant.home.adapter.CommentAdapter;
-import com.bestowing.restaurant.home.adapter.ReviewAdapter;
 import com.bestowing.restaurant.home.adapter.ViewPagerAdapter;
 import com.bumptech.glide.Glide;
-import com.bestowing.restaurant.R;
-import com.bestowing.restaurant.ReviewInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,12 +38,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.pm10.library.CircleIndicator;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -74,8 +66,15 @@ public class ReviewDetailActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.horizon_enter, R.anim.none);
         setContentView(R.layout.activity_review_detail);
         utility = new Utility();
+        commentList = new ArrayList<>();
+        commentAdapter = new CommentAdapter(commentList, this);
+        userInfos = new HashMap<>();
+        db = FirebaseFirestore.getInstance();
+
         comments_nbr = findViewById(R.id.comments_nbr);
+
         reviewInfo = (ReviewInfo)getIntent().getSerializableExtra("reviewInfo");
+        // 사진
         ArrayList<String> photos = null;
         try {
             photos = reviewInfo.getPhotos();
@@ -89,8 +88,6 @@ public class ReviewDetailActivity extends AppCompatActivity {
                 circleIndicator.setupWithViewPager(viewPager);
             }
         }
-        db = FirebaseFirestore.getInstance();
-        commentList = new ArrayList<>();
         // 태그
         tagList = reviewInfo.getTags();
         TextView tag1 = findViewById(R.id.tag1);
@@ -117,8 +114,6 @@ public class ReviewDetailActivity extends AppCompatActivity {
                     break;
             }
         }
-        userInfos = new HashMap<>();
-        commentAdapter = new CommentAdapter(commentList, this);
         // 댓글정보 받아오기
         recyclerView = findViewById(R.id.comment_item_view);
         recyclerView.setHasFixedSize(true);
@@ -129,6 +124,8 @@ public class ReviewDetailActivity extends AppCompatActivity {
         if (reviewInfo.getLike() != null && reviewInfo.getLike().containsKey(user.getUid())) {
             like.setImageResource(R.drawable.ic_like);
         }
+        TextView likeNum = findViewById(R.id.like_num);
+        likeNum.setText(Long.toString(reviewInfo.getLikeNum()));
         TextView writer_nickname = findViewById(R.id.writer_nickname);
         writer_nickname.setText(reviewInfo.getUserInfo().getNickName());
         CircleImageView writer_profile = findViewById(R.id.writer_profile);
