@@ -16,6 +16,7 @@ public class ReviewInfo implements Serializable {
     private String id;
     private Map<String, Boolean> like;
     private Long likeNum;
+    private ArrayList<String> tags;
 
     public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum) {
         this.title = title;
@@ -27,6 +28,19 @@ public class ReviewInfo implements Serializable {
         this.id = id;
         this.like = like;
         this.likeNum = likeNum;
+    }
+
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum, ArrayList<String> tags) {
+        this.title = title;
+        this.userComment = userComment;
+        this.photos = photos;
+        this.userInfo = userInfo;
+        this.writer = writer;
+        this.createdAt = createdAt;
+        this.id = id;
+        this.like = like;
+        this.likeNum = likeNum;
+        this.tags = tags;
     }
 
     public String getTitle() {
@@ -99,6 +113,14 @@ public class ReviewInfo implements Serializable {
 
     public void setLikeNum(Long likeNum) {
         this.likeNum = likeNum;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
     }
 
     public void like(boolean is_like) {

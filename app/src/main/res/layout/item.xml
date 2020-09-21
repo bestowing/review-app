@@ -35,7 +35,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:text="닉네임"
-        android:textColor="@color/colorAccentBlack"
+        android:textColor="@color/colorBaseBlack"
         app:layout_constraintBottom_toBottomOf="@+id/writer_profile"
         app:layout_constraintStart_toEndOf="@+id/writer_profile"
         app:layout_constraintTop_toTopOf="@+id/writer_profile" />
@@ -75,7 +75,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="6dp"
         android:text="날짜"
-        android:textColor="@color/colorAmbientBlack"
+        android:textColor="@color/colorBaseBlack"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/comment" />

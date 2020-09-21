@@ -2,6 +2,7 @@ package com.bestowing.restaurant.home.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -138,7 +139,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         TextView title = cardView.findViewById(R.id.title);
         //TextView user_comment = cardView.findViewById(R.id.user_comment);
         TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
-
+        TextView tag1 = cardView.findViewById(R.id.tag1);
+        TextView tag2 = cardView.findViewById(R.id.tag2);
+        TextView tag3 = cardView.findViewById(R.id.tag3);
         /*
         // 닉네임 세팅
         writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
@@ -183,6 +186,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
          */
         // 타임스탬프 세팅
         //createdAtTextView.setText(utility.calculateTimeStamp(mDataset.get(position).getCreatedAt()));
+        // 사진 뷰페이저 세팅
         ArrayList<String> photos = mDataset.get(position).getPhotos();
         MyViewPager viewPager = cardView.findViewById(R.id.viewPager);
         if (viewPager.getTag() == null || !viewPager.getTag().equals(photos)) {
@@ -191,35 +195,35 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             if (photos != null) {
                 viewPager.setPadding(0, 1, 0, 1);
                 viewPager.setAdapter(new ViewPagerAdapter(activity, photos));
-                CircleIndicator circleIndicator = cardView.findViewById(R.id.circle_indicator);
-                circleIndicator.setupWithViewPager(viewPager);
-            }
-        }
-
-        /*
-        LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ArrayList<String> contentsList = mDataset.get(position).getPhotos();
-
-        if(contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)) {
-            contentsLayout.setTag(contentsList);
-            contentsLayout.removeAllViews();
-            if(contentsList != null) {
-                for (int i = 0; i < contentsList.size(); i++ ){
-                    String contents = contentsList.get(i);
-                    ImageView imageView = new ImageView(activity);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    contentsLayout.addView(imageView);
-                    try {
-                        Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
-                    } catch (Exception e) {}
+                if (photos.size() >= 2) {
+                    CircleIndicator circleIndicator = cardView.findViewById(R.id.circle_indicator);
+                    circleIndicator.setupWithViewPager(viewPager);
                 }
             }
         }
-
-         */
+        // 태그 세팅
+        ArrayList<String> tagsList = mDataset.get(position).getTags();
+        if (tagsList != null) {
+            int tagSize = tagsList.size();
+            switch (tagSize) {
+                case 3:
+                    String tag3Content = "#" + tagsList.get(2);
+                    tag3.setText(tag3Content);
+                    tag3.setPaintFlags(tag3.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag3.setVisibility(View.VISIBLE);
+                case 2:
+                    String tag2Content = "#" + tagsList.get(1);
+                    tag2.setText(tag2Content);
+                    tag2.setPaintFlags(tag2.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag2.setVisibility(View.VISIBLE);
+                case 1:
+                    String tag1Content = "#" + tagsList.get(0);
+                    tag1.setText(tag1Content);
+                    tag1.setPaintFlags(tag1.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    tag1.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
     }
 
     @Override

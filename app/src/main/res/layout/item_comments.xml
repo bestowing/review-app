@@ -28,7 +28,7 @@
             android:layout_marginTop="4dp"
             android:text="닉네임"
             android:includeFontPadding="false"
-            android:textColor="@color/colorAccentBlack"
+            android:textColor="@color/colorBaseBlack"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/profile"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,7 +40,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:text="날짜"
-            android:textColor="@color/colorAmbientBlack"
+            android:textColor="@color/colorBaseBlack"
             android:includeFontPadding="false"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/profile"

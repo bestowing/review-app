@@ -42,12 +42,63 @@
         android:layout_marginRight="16dp"
         android:includeFontPadding="false"
         android:text="제목"
-        android:textColor="@color/colorAccentBlack"
+        android:textColor="@color/colorBaseBlack"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/like"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewPager" />
+
+    <LinearLayout
+        android:id="@+id/tagsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <TextView
+            android:id="@+id/tag1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:includeFontPadding="false"
+            android:text="#태그1"
+            android:textColor="@color/pointBlue"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tag2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:includeFontPadding="false"
+            android:text="#태그2"
+            android:textColor="@color/pointBlue"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tag3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="#태그3"
+            android:textColor="@color/pointBlue"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/like"
@@ -80,7 +131,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/default_profile"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/tagsLayout"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
@@ -93,7 +144,7 @@
         android:text="닉네임"
         android:includeFontPadding="false"
         android:textStyle="bold"
-        android:textColor="@color/colorAccentBlack"
+        android:textColor="@color/colorBaseBlack"
         app:layout_constraintStart_toEndOf="@+id/writer_profile"
         app:layout_constraintTop_toTopOf="@+id/writer_profile" />
 
@@ -136,7 +187,7 @@
         android:layout_marginLeft="10dp"
         android:text="날짜"
         android:includeFontPadding="false"
-        android:textColor="@color/colorAmbientBlack"
+        android:textColor="@color/colorBaseBlack"
         android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/writer_profile"
         app:layout_constraintTop_toBottomOf="@+id/writer_nickname" />

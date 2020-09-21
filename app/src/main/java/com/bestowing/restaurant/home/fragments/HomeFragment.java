@@ -172,7 +172,8 @@ public class HomeFragment extends Fragment {
                                             new Date(document.getDate("createdAt").getTime()),
                                             document.getId(),
                                             (Map<String, Boolean>)document.get("like"),
-                                            document.getLong("likeNum"));
+                                            document.getLong("likeNum"),
+                                            (ArrayList<String>) document.getData().get("tags"));
                                     reviewList.add(review);
                                 } else {    // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재하지 않음 -> 일단 userinfo는 생략
                                     review = new ReviewInfo(
@@ -184,7 +185,8 @@ public class HomeFragment extends Fragment {
                                             new Date(document.getDate("createdAt").getTime()),
                                             document.getId(),
                                             (Map<String, Boolean>)document.get("like"),
-                                            document.getLong("likeNum"));
+                                            document.getLong("likeNum"),
+                                            (ArrayList<String>) document.getData().get("tags"));
                                     reviewList.add(review);
                                     unknown.add(review);
                                     unknown_num++;
