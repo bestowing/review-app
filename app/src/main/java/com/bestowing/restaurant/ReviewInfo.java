@@ -17,7 +17,10 @@ public class ReviewInfo implements Serializable {
     private Map<String, Boolean> like;
     private Long likeNum;
     private ArrayList<String> tags;
+    private Long rating;
+    private String restaurantId;
 
+    // 생성자
     public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum) {
         this.title = title;
         this.userComment = userComment;
@@ -43,6 +46,22 @@ public class ReviewInfo implements Serializable {
         this.tags = tags;
     }
 
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum, ArrayList<String> tags, Long rating, String restaurantId) {
+        this.title = title;
+        this.userComment = userComment;
+        this.photos = photos;
+        this.userInfo = userInfo;
+        this.writer = writer;
+        this.createdAt = createdAt;
+        this.id = id;
+        this.like = like;
+        this.likeNum = likeNum;
+        this.tags = tags;
+        this.rating = rating;
+        this.restaurantId = restaurantId;
+    }
+
+    // getter, setter
     public String getTitle() {
         return title;
     }
@@ -123,6 +142,23 @@ public class ReviewInfo implements Serializable {
         this.tags = tags;
     }
 
+    public Long getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
+    }
+
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    // like 기능
     public void like(boolean is_like) {
         if (is_like)
             this.likeNum++;
