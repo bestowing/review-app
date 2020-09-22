@@ -126,7 +126,6 @@ public class ReviewDetailActivity extends AppCompatActivity {
         ImageView star3 = findViewById(R.id.star3);
         ImageView star2 = findViewById(R.id.star2);
         ImageView star1 = findViewById(R.id.star1);
-        Log.d("test123", "이 리뷰의 별점은: " + lating);
         if (lating >= 1) {
             star1.setImageResource(R.drawable.ic_star_color);
             if (lating >= 2) {
@@ -140,20 +139,16 @@ public class ReviewDetailActivity extends AppCompatActivity {
                         } else if (lating != 4){
                             star5.setImageResource(R.drawable.ic_star_half);
                         }
-                    } else {
-                        if (lating != 3)
+                    } else if (lating != 3) {
                             star4.setImageResource(R.drawable.ic_star_half);
                     }
-                } else {
-                    if (lating != 2)
+                } else if (lating != 2) {
                         star3.setImageResource(R.drawable.ic_star_half);
                 }
-            } else {
-                if (lating != 1)
+            } else if (lating != 1) {
                     star2.setImageResource(R.drawable.ic_star_half);
             }
-        } else {
-            if (lating != 0)
+        } else if (lating != 0) {
                 star1.setImageResource(R.drawable.ic_star_half);
         }
 

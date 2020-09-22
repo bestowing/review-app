@@ -16,7 +16,9 @@
         <activity android:name=".auth.ResetPwdActivity" />
         <activity android:name=".auth.LoginActivity" />
         <activity android:name=".auth.EmailVerifyActivity" />
-        <activity android:name=".auth.BootActivity">
+        <activity
+            android:name=".auth.BootActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
