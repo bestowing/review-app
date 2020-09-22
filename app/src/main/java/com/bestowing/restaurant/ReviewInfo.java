@@ -17,7 +17,7 @@ public class ReviewInfo implements Serializable {
     private Map<String, Boolean> like;
     private Long likeNum;
     private ArrayList<String> tags;
-    private Long rating;
+    private double rating;
     private String restaurantId;
 
     // 생성자
@@ -33,20 +33,7 @@ public class ReviewInfo implements Serializable {
         this.likeNum = likeNum;
     }
 
-    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum, ArrayList<String> tags) {
-        this.title = title;
-        this.userComment = userComment;
-        this.photos = photos;
-        this.userInfo = userInfo;
-        this.writer = writer;
-        this.createdAt = createdAt;
-        this.id = id;
-        this.like = like;
-        this.likeNum = likeNum;
-        this.tags = tags;
-    }
-
-    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum, ArrayList<String> tags, Long rating, String restaurantId) {
+    public ReviewInfo(String title, String userComment, ArrayList<String> photos, UserInfo userInfo, String writer, Date createdAt, String id, Map<String, Boolean> like, Long likeNum, ArrayList<String> tags, double rating, String restaurantId) {
         this.title = title;
         this.userComment = userComment;
         this.photos = photos;
@@ -142,11 +129,11 @@ public class ReviewInfo implements Serializable {
         this.tags = tags;
     }
 
-    public Long getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Long rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

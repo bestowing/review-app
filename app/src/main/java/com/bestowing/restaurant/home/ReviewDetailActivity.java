@@ -119,6 +119,44 @@ public class ReviewDetailActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(commentAdapter);
+        // 별점
+        double lating = reviewInfo.getRating();
+        ImageView star5 = findViewById(R.id.star5);
+        ImageView star4 = findViewById(R.id.star4);
+        ImageView star3 = findViewById(R.id.star3);
+        ImageView star2 = findViewById(R.id.star2);
+        ImageView star1 = findViewById(R.id.star1);
+        Log.d("test123", "이 리뷰의 별점은: " + lating);
+        if (lating >= 1) {
+            star1.setImageResource(R.drawable.ic_star_color);
+            if (lating >= 2) {
+                star2.setImageResource(R.drawable.ic_star_color);
+                if (lating >= 3) {
+                    star3.setImageResource(R.drawable.ic_star_color);
+                    if (lating >= 4) {
+                        star4.setImageResource(R.drawable.ic_star_color);
+                        if (lating == 5) {
+                            star5.setImageResource(R.drawable.ic_star_color);
+                        } else if (lating != 4){
+                            star5.setImageResource(R.drawable.ic_star_half);
+                        }
+                    } else {
+                        if (lating != 3)
+                            star4.setImageResource(R.drawable.ic_star_half);
+                    }
+                } else {
+                    if (lating != 2)
+                        star3.setImageResource(R.drawable.ic_star_half);
+                }
+            } else {
+                if (lating != 1)
+                    star2.setImageResource(R.drawable.ic_star_half);
+            }
+        } else {
+            if (lating != 0)
+                star1.setImageResource(R.drawable.ic_star_half);
+        }
+
 
         ImageView like = findViewById(R.id.like);
         if (reviewInfo.getLike() != null && reviewInfo.getLike().containsKey(user.getUid())) {

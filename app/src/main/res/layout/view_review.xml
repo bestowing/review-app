@@ -148,16 +148,54 @@
         app:layout_constraintStart_toEndOf="@+id/writer_profile"
         app:layout_constraintTop_toTopOf="@+id/writer_profile" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/writer_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/writer_profile">
+
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_star" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_star" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_star" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_star" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_star" />
+    </LinearLayout>
+
     <!--
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/ic_option"
-        app:layout_constraintBottom_toBottomOf="@+id/writer_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/writer_profile" />
+        android:src="@drawable/ic_option"/>
     -->
 
     <TextView
