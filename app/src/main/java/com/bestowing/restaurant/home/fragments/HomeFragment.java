@@ -1,15 +1,23 @@
 package com.bestowing.restaurant.home.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -55,10 +63,12 @@ public class HomeFragment extends Fragment {
     private ArrayList<ReviewInfo> reviewList;
     private HashMap<String, UserInfo> userInfos; // 유저 ID를 key, 유저 정보를 value로 저장하는 자료구조
     private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayout search_option;
 
     public HomeFragment() {}
 
     private boolean isUpdating;
+    private boolean isVanishing;
     int successCount;
     private int downloadCnt;
 
@@ -66,15 +76,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
-
         reviewList = new ArrayList<>();
         userInfos = new HashMap<>();
         reviewAdapter = new ReviewAdapter(HomeActivity.mContext, reviewList, HomeActivity.mContext.user.getUid());
         reviewAdapter.setOnReviewListener(onReviewListener);
-
         db = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
-
+        search_option = rootView.findViewById(R.id.search_option);
         recyclerView = rootView.findViewById(R.id.review_item_view);
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.mContext));
@@ -88,6 +96,47 @@ public class HomeFragment extends Fragment {
                 int itemTotalCount = recyclerView.getAdapter().getItemCount() - 1;
                 if (lastVisibleItemPosition == itemTotalCount && !isUpdating) {
                     reviewUpdates();
+                }
+
+                if (dy > 10) {
+                    if (search_option.getVisibility() != View.GONE && !isVanishing) {
+                        Animation animation = new TranslateAnimation(
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 1.0f);
+                        animation.setDuration(100);
+                        animation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                                isVanishing = true;
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                search_option.setVisibility(View.GONE);
+                                isVanishing = false;
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        //search_option.setAnimation(animation);
+                        search_option.startAnimation(animation);
+                    }
+                } else if (dy < -10) {
+                    if (search_option.getVisibility() != View.VISIBLE) {
+                        search_option.setVisibility(View.VISIBLE);
+                        Animation animation = new TranslateAnimation(
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 1.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f);
+                        animation.setDuration(100);
+                        search_option.setAnimation(animation);
+                    }
                 }
             }
         });
