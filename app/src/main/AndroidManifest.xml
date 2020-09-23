@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -12,9 +15,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".PopupActivity"
-            android:theme="@style/PopupTheme" android:screenOrientation="portrait"/>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity android:name=".TestActivity"></activity>
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="aa7e3c04bf32c54b5c82c2b7163ee7e0" />
         <activity android:name=".auth.SignUpActivity" />
         <activity android:name=".auth.ResetPwdActivity" />
         <activity android:name=".auth.LoginActivity" />
