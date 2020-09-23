@@ -18,6 +18,7 @@ import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.auth.LoginActivity;
 import com.bestowing.restaurant.home.fragments.HomeFragment;
 import com.bestowing.restaurant.home.fragments.MyPageFragment;
+import com.bestowing.restaurant.home.fragments.StoreListFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.data.model.User;
@@ -43,6 +44,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private FragmentManager manager;
     private HomeFragment homeFragment;
+    private StoreListFragment storeListFragment;
     protected MyPageFragment myPageFragment;
 
     @Override
@@ -53,12 +55,18 @@ public class HomeActivity extends AppCompatActivity {
 
         manager = getSupportFragmentManager();
         homeFragment = new HomeFragment();
+        storeListFragment = new StoreListFragment();
         myPageFragment = new MyPageFragment();
-        manager.beginTransaction().add(R.id.frameLayout, homeFragment).add(R.id.frameLayout, myPageFragment).hide(myPageFragment).commit();
+        manager.beginTransaction().add(R.id.frameLayout, homeFragment)
+                .add(R.id.frameLayout, storeListFragment).hide(storeListFragment)
+                .add(R.id.frameLayout, myPageFragment).hide(myPageFragment)
+                .commit();
 
         // 버튼 및 프래그먼트 설정
         home_btn = findViewById(R.id.home_btn);
         home_btn.setImageResource(R.drawable.ic_home_selected);
+        category_btn = findViewById(R.id.category_btn);
+        category_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn = findViewById(R.id.my_page_btn);
         home_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn.setOnClickListener(bottomBarClickListener);
@@ -73,15 +81,21 @@ public class HomeActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.home_btn:
-                    manager.beginTransaction().hide(myPageFragment).show(homeFragment).commit();
+                    manager.beginTransaction().hide(storeListFragment).hide(myPageFragment).show(homeFragment).commit();
                     home_btn.setImageResource(R.drawable.ic_home_selected);
-                    //category_btn.setImageResource(R.drawable.ic_restaurant);
+                    category_btn.setImageResource(R.drawable.ic_restaurant);
                     my_page_btn.setImageResource(R.drawable.ic_settings);
                     break;
-                case R.id.my_page_btn :
-                    manager.beginTransaction().hide(homeFragment).show(myPageFragment).commit();
+                case R.id.category_btn:
+                    manager.beginTransaction().hide(homeFragment).hide(myPageFragment).show(storeListFragment).commit();
                     home_btn.setImageResource(R.drawable.ic_home);
-                    //category_btn.setImageResource(R.drawable.ic_restaurant);
+                    category_btn.setImageResource(R.drawable.ic_restaurant_selected);
+                    my_page_btn.setImageResource(R.drawable.ic_settings);
+                    break ;
+                case R.id.my_page_btn :
+                    manager.beginTransaction().hide(storeListFragment).hide(homeFragment).show(myPageFragment).commit();
+                    home_btn.setImageResource(R.drawable.ic_home);
+                    category_btn.setImageResource(R.drawable.ic_restaurant);
                     my_page_btn.setImageResource(R.drawable.ic_settings_selected);
                     break;
             }
