@@ -4,18 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/navbar"
-    tools:context=".PopupActivity">
+    android:background="@drawable/navbar">
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="검색 위치를 변경해볼까요?"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginTop="25dp"
+        android:text="검색 위치 변경하기"
         android:textColor="@color/colorBaseBlack"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,28 +23,14 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:text="위치를 선택해주세요."
-        android:textSize="15sp"
-        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="찾고 싶은 식당 위치별로\n리뷰를 골라볼 수 있어요."
+        android:textColor="@color/colorBaseBlack"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView1" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitEnd"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.26"
-        app:srcCompat="@drawable/map" />
 
     <TextView
         android:id="@+id/textView8"
@@ -53,11 +38,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="학교 주변"
+        android:textColor="@color/colorBaseBlack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
+    <!--
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
@@ -96,6 +83,7 @@
             android:layout_marginLeft="16dp"
             android:text="정문" />
     </LinearLayout>
+    -->
 
     <TextView
         android:id="@+id/textView10"
@@ -103,21 +91,134 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="혜화역 주변"
+        android:textColor="@color/colorBaseBlack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chip1" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip1"
+        style="@style/Widget.MaterialComponents.Chip.Filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="정문"
+        app:chipBackgroundColor="@color/pointBlue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
-    <Button
-        android:id="@+id/button"
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip2"
+        style="@style/Widget.MaterialComponents.Chip.Filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="쪽문"
+        app:chipBackgroundColor="@color/pointBlue"
+        app:layout_constraintBottom_toBottomOf="@+id/chip1"
+        app:layout_constraintStart_toEndOf="@+id/chip1"
+        app:layout_constraintTop_toTopOf="@+id/chip1" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip3"
+        style="@style/Widget.MaterialComponents.Chip.Filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="철문"
+        app:chipBackgroundColor="@color/pointBlue"
+        app:layout_constraintBottom_toBottomOf="@+id/chip2"
+        app:layout_constraintStart_toEndOf="@+id/chip2"
+        app:layout_constraintTop_toTopOf="@+id/chip2" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="25dp"
+        android:includeFontPadding="false"
+        android:padding="6dp"
         android:text="확인"
+        android:background="@color/fui_transparent"
+        android:textColor="@color/colorBaseBlack"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip7"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                app:chipBackgroundColor="@color/pointBlue"
+                android:text="마로니에"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip4"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                app:chipBackgroundColor="@color/pointBlue"
+                android:text="대명거리"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip5"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                app:chipBackgroundColor="@color/pointBlue"
+                android:text="소나무길"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip6"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                app:chipBackgroundColor="@color/pointBlue"
+                android:text="혜화로터리"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!--
     <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
@@ -190,5 +291,6 @@
             android:layout_weight="1"
             android:text="마로니에" />
     </LinearLayout>
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
