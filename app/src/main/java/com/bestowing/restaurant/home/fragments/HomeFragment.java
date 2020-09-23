@@ -1,38 +1,32 @@
 package com.bestowing.restaurant.home.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.bestowing.restaurant.PopupActivity;
+import com.bestowing.restaurant.CustomDialog;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.ReviewInfo;
 import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.home.HomeActivity;
-import com.bestowing.restaurant.home.WriteReviewActivity;
 import com.bestowing.restaurant.home.adapter.ReviewAdapter;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
-import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,15 +40,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.Document;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
@@ -87,9 +77,9 @@ public class HomeFragment extends Fragment {
         rootView.findViewById(R.id.selected_position).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), PopupActivity.class);
-                intent.putExtra("data", "Test Popup");
-                startActivityForResult(intent, 1);
+                CustomDialog dialog = new CustomDialog(HomeActivity.mContext, R.style.PopupTheme);
+                dialog.getWindow().setGravity(Gravity.BOTTOM);
+                dialog.show();
             }
         });
         recyclerView = rootView.findViewById(R.id.review_item_view);
