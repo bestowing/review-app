@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bestowing.restaurant.PopupActivity;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.ReviewInfo;
 import com.bestowing.restaurant.UserInfo;
@@ -83,6 +84,14 @@ public class HomeFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         search_option = rootView.findViewById(R.id.search_option);
+        rootView.findViewById(R.id.selected_position).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), PopupActivity.class);
+                intent.putExtra("data", "Test Popup");
+                startActivityForResult(intent, 1);
+            }
+        });
         recyclerView = rootView.findViewById(R.id.review_item_view);
         //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.mContext));
@@ -316,5 +325,10 @@ public class HomeFragment extends Fragment {
 
     private String storageUrlToName(String url){
         return url.split("\\?")[0].split("%2F")[url.split("\\?")[0].split("%2F").length - 1];
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
