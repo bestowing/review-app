@@ -3,6 +3,7 @@ package com.bestowing.restaurant.auth;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,11 +14,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bestowing.restaurant.R;
+import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.home.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EmailVerifyActivity extends AppCompatActivity {
     private FirebaseUser user;
@@ -52,8 +57,8 @@ public class EmailVerifyActivity extends AppCompatActivity {
                 case R.id.verify_btn:
                     user.reload();
                     if(user.isEmailVerified()) {
+                        initInfo();
                         showToast("이메일 인증을 확인했어요. 일반 사용자로 앱을 시작해요.");
-                        moveActivity(HomeActivity.class);
                     } else {
                         showToast("아직 인증이 되지 않은것 같아요. 잠시 후에 다시 시도해주세요.");
                     }
@@ -91,7 +96,22 @@ public class EmailVerifyActivity extends AppCompatActivity {
     }
 
     private void initInfo() {
-
+        final UserInfo userInfo = new UserInfo("익명", null);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(user.getUid()).set(userInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        moveActivity(HomeActivity.class);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showToast("문제가 생겼어요. 회원정보 등록에 실패했어요.");
+                        Log.d("test123", "Error writing document " + e);
+                    }
+                });
     }
 
     private void moveActivity(Class c) {
