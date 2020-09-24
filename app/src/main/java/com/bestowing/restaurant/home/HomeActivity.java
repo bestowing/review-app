@@ -3,6 +3,7 @@ package com.bestowing.restaurant.home;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -32,7 +33,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
 public class HomeActivity extends AppCompatActivity {
-    private int REQUEST_IS_REVIEW_ADDED = 1;
+    private final int REQUEST_IS_REVIEW_ADDED = 1;
+    private final int REQUEST_UPDATE_INFO = 2;
+    private final int RESULT_UPDATE_OK = 3;
 
     public FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();               // Auth 유저 정보
     private UserInfo myInfo;
@@ -52,8 +55,16 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mContext = this;
-
         manager = getSupportFragmentManager();
+        home_btn = findViewById(R.id.home_btn);
+        home_btn.setImageResource(R.drawable.ic_home_selected);
+        category_btn = findViewById(R.id.category_btn);
+        my_page_btn = findViewById(R.id.my_page_btn);
+        write_review_btn = findViewById(R.id.write_review_btn);
+        setMyInfoFromServer(); // 최초 실행시에만 서버에서 정보를 받아옴
+    }
+
+    private void setFragments() {
         homeFragment = new HomeFragment();
         storeListFragment = new StoreListFragment();
         myPageFragment = new MyPageFragment();
@@ -62,18 +73,10 @@ public class HomeActivity extends AppCompatActivity {
                 .add(R.id.frameLayout, myPageFragment).hide(myPageFragment)
                 .commit();
 
-        // 버튼 및 프래그먼트 설정
-        home_btn = findViewById(R.id.home_btn);
-        home_btn.setImageResource(R.drawable.ic_home_selected);
-        category_btn = findViewById(R.id.category_btn);
         category_btn.setOnClickListener(bottomBarClickListener);
-        my_page_btn = findViewById(R.id.my_page_btn);
         home_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn.setOnClickListener(bottomBarClickListener);
-        write_review_btn = findViewById(R.id.write_review_btn);
         write_review_btn.setOnClickListener(onClickListener);
-
-        setMyInfo();
     }
 
     private View.OnClickListener bottomBarClickListener = new View.OnClickListener() {
@@ -146,7 +149,12 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setMyInfo() {
+    public void setMyInfoFromUser(UserInfo updatedMyInfo) {
+        this.myInfo.setNickName(updatedMyInfo.getNickName());
+        this.myInfo.setPhotoUrl(updatedMyInfo.getPhotoUrl());
+    }
+
+    private void setMyInfoFromServer() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(user.getUid());
         userRef.get(Source.SERVER).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -155,12 +163,16 @@ public class HomeActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     String photoUrl = null;
-                    String my_nickname = null;
+                    String my_nickname = "미인증";
                     try {
-                        photoUrl = document.get("photoUrl").toString();
                         my_nickname = document.get("nickName").toString();
+                        photoUrl = document.get("photoUrl").toString();
                     } catch (Exception ignored) {}
                     myInfo = new UserInfo(my_nickname, photoUrl);
+                    if (user.isEmailVerified() && myInfo.getNickName().equals("미인증")) {
+                        myInfo.setNickName("익명");
+                    }
+                    setFragments();
                 }
             }
         });
