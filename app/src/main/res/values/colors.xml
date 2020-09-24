@@ -3,5 +3,6 @@
     <color name="colorBaseBlack">#000000</color>
     <color name="colorLike">#ffb9bb</color>
     <color name="navBackground">#f7fdff</color>
+    <color name="baseGray">#808080</color>
     <color name="pointBlue">#1a73ff</color>
 </resources>
