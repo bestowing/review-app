@@ -132,7 +132,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         });
         return viewHolder;
     }
-
+    
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         CardView cardView = holder.cardView;
@@ -147,6 +147,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         TextView tag1 = cardView.findViewById(R.id.tag1);
         TextView tag2 = cardView.findViewById(R.id.tag2);
         TextView tag3 = cardView.findViewById(R.id.tag3);
+        CircleIndicator circleIndicator = cardView.findViewById(R.id.circle_indicator);
         /*
         // 닉네임 세팅
         writer_nickname.setText(mDataset.get(position).getUserInfo().getNickName());
@@ -200,8 +201,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 viewPager.setPadding(0, 1, 0, 1);
                 viewPager.setAdapter(new ViewPagerAdapter(activity, photos));
                 if (photos.size() >= 2) {
-                    CircleIndicator circleIndicator = cardView.findViewById(R.id.circle_indicator);
                     circleIndicator.setupWithViewPager(viewPager);
+                    circleIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    circleIndicator.setVisibility(View.GONE);
                 }
             }
         }
@@ -209,24 +212,37 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         ArrayList<String> tagsList = mDataset.get(position).getTags();
         if (tagsList != null) {
             int tagSize = tagsList.size();
-            switch (tagSize) {
-                case 3:
-                    String tag3Content = "#" + tagsList.get(2);
-                    tag3.setText(tag3Content);
-                    tag3.setPaintFlags(tag3.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    tag3.setVisibility(View.VISIBLE);
-                case 2:
+            if (tagSize > 0) {
+                String tag1Content = "#" + tagsList.get(0);
+                tag1.setText(tag1Content);
+                tag1.setPaintFlags(tag1.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                tag1.setVisibility(View.VISIBLE);
+                if (tagSize > 1) {
                     String tag2Content = "#" + tagsList.get(1);
                     tag2.setText(tag2Content);
                     tag2.setPaintFlags(tag2.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     tag2.setVisibility(View.VISIBLE);
-                case 1:
-                    String tag1Content = "#" + tagsList.get(0);
-                    tag1.setText(tag1Content);
-                    tag1.setPaintFlags(tag1.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    tag1.setVisibility(View.VISIBLE);
-                    break;
+                    if (tagSize > 2) {
+                        String tag3Content = "#" + tagsList.get(2);
+                        tag3.setText(tag3Content);
+                        tag3.setPaintFlags(tag3.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                        tag3.setVisibility(View.VISIBLE);
+                    } else {
+                        tag3.setVisibility(View.GONE);
+                    }
+                } else {
+                    tag2.setVisibility(View.GONE);
+                    tag3.setVisibility(View.GONE);
+                }
+            } else {
+                tag1.setVisibility(View.GONE);
+                tag2.setVisibility(View.GONE);
+                tag3.setVisibility(View.GONE);
             }
+        } else {
+            tag1.setVisibility(View.GONE);
+            tag2.setVisibility(View.GONE);
+            tag3.setVisibility(View.GONE);
         }
     }
 

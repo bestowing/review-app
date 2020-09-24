@@ -265,7 +265,6 @@ public class HomeFragment extends Fragment {
         final CollectionReference collectionReference = db.collection("reviews");
         final int review_size = reviewList.size();
         Date date = review_size == 0 ? new Date() : reviewList.get(review_size - 1).getCreatedAt();
-        long likeNum = review_size == 0 ? 200000 : reviewList.get(review_size - 1).getLikeNum();
         if (isLatest) {
             collectionReference.orderBy("createdAt", Query.Direction.DESCENDING)
                     .whereLessThan("createdAt", date).limit(10).get()
