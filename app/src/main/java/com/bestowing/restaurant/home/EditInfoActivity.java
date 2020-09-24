@@ -1,5 +1,6 @@
 package com.bestowing.restaurant.home;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,8 @@ public class EditInfoActivity extends PhotoModuleActivity {
     private FirebaseUser user;
     private CircleImageView user_profile;
 
+    private UserInfo myInfo;
+
     private boolean is_photo_exist = false;
     private String exist_photoUrl;
     EditText user_nickname;
@@ -54,7 +57,9 @@ public class EditInfoActivity extends PhotoModuleActivity {
         findViewById(R.id.submit_btn).setOnClickListener(onClickListener);
         user_profile = findViewById(R.id.user_profile);
         findViewById(R.id.edit_profile_btn).setOnClickListener(onClickListener);
-        setUserInfo();
+        Intent intent = getIntent();
+        myInfo = (UserInfo) intent.getSerializableExtra("myInfo");
+        setViewFromMyInfo();
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -71,26 +76,23 @@ public class EditInfoActivity extends PhotoModuleActivity {
         }
     };
 
-    private void setUserInfo() {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(user.getUid());
-        userRef.get(Source.SERVER).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    exist_photoUrl = null;
-                    Uri uri = null;
-                    try {
-                        exist_photoUrl = document.get("photoUrl").toString();
-                        uri = Uri.parse(exist_photoUrl);
-                    } catch (Exception ignored) {}
-                    if (uri != null) is_photo_exist = true;
-                    user_nickname.setText(document.get("nickName").toString());
-                    Glide.with(getApplicationContext()).load(uri).error(R.drawable.default_profile).into(user_profile);
-                }
+    private void setViewFromMyInfo() {
+        if (this.myInfo != null) {
+            String myNickName = this.myInfo.getNickName();
+            if (myNickName.equals("미인증")) {
+                showToast("미인증 사용자는 정보 수정이 제한돼요.");
+                finish();
             }
-        });
+            user_nickname.setText(myNickName);
+            Uri uri = null;
+            try {
+                uri = Uri.parse(this.myInfo.getPhotoUrl());
+            } catch (Exception ignored) {}
+            Glide.with(getApplicationContext()).load(uri).error(R.drawable.default_profile).into(user_profile);
+        } else {
+            showToast("문제가 생겼어요.");
+            finish();
+        }
     }
 
     private void profileUpdate() {
@@ -145,8 +147,8 @@ public class EditInfoActivity extends PhotoModuleActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        ((HomeActivity)HomeActivity.mContext).myPageFragment.changeInfo();
-                        showToast("회원정보 등록을 성공했어요.");
+                        showToast("회원정보 등록에 성공했어요.");
+                        ((HomeActivity)HomeActivity.mContext).setMyInfoFromUser(userInfo);
                         finish();
                     }
                 })
