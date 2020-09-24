@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -49,6 +50,13 @@ public class CustomDialog extends Dialog {
             params.windowAnimations = R.style.AnimationPopupStyle;
             window.setAttributes( params );
         }
+        findViewById(R.id.need_help_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 지도 만든거 표시해주기
+                Log.d("test123", "나도 몰라요.");
+            }
+        });
         chips = new ArrayList<>();
         chips.add((Chip)findViewById(R.id.chip1));
         chips.add((Chip)findViewById(R.id.chip2));
