@@ -1,5 +1,6 @@
 package com.bestowing.restaurant.home.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,10 +11,12 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +44,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +60,10 @@ public class HomeFragment extends Fragment {
     private HashMap<String, UserInfo> userInfos; // 유저 ID를 key, 유저 정보를 value로 저장하는 자료구조
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout search_option;
+    private TextView option_latest;
+    private TextView option_popular;
+
+    DocumentSnapshot lastVisible;
 
     public HomeFragment() {}
 
@@ -62,6 +71,7 @@ public class HomeFragment extends Fragment {
     private boolean isVanishing;
     int successCount;
     private int downloadCnt;
+    private boolean isLatest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,9 +81,14 @@ public class HomeFragment extends Fragment {
         userInfos = new HashMap<>();
         reviewAdapter = new ReviewAdapter(HomeActivity.mContext, reviewList, HomeActivity.mContext.user.getUid());
         reviewAdapter.setOnReviewListener(onReviewListener);
+        isLatest = true;
         db = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         search_option = rootView.findViewById(R.id.search_option);
+        option_latest = rootView.findViewById(R.id.option_latest);
+        option_popular = rootView.findViewById(R.id.option_popular);
+        option_latest.setOnClickListener(onClickListener);
+        option_popular.setOnClickListener(onClickListener);
         rootView.findViewById(R.id.selected_position).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +168,41 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        final int baseBlack = ContextCompat.getColor(HomeActivity.mContext, R.color.colorBaseBlack);
+        final int baseGray = ContextCompat.getColor(HomeActivity.mContext, R.color.baseGray);
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.option_latest:
+                    if (!isLatest) {
+                        isLatest = true;
+                        option_latest.setTextColor(baseBlack);
+                        option_latest.setBackgroundResource(R.drawable.select_bottom_underline);
+                        option_popular.setTextColor(baseGray);
+                        option_popular.setBackgroundResource(R.drawable.unselect_bottom_underline);
+                        reviewList.clear();
+                        lastVisible = null;
+                        reviewUpdates();
+                        showToast("최신순으로 정렬해요.");
+                    }
+                    break ;
+                case R.id.option_popular:
+                    if (isLatest) {
+                        isLatest = false;
+                        option_popular.setTextColor(baseBlack);
+                        option_latest.setBackgroundResource(R.drawable.unselect_bottom_underline);
+                        option_latest.setTextColor(baseGray);
+                        option_popular.setBackgroundResource(R.drawable.select_bottom_underline);
+                        reviewList.clear();
+                        reviewUpdates();
+                        showToast("인기순으로 정렬해요.");
+                    }
+                    break ;
+            }
+        }
+    };
+
     private OnReviewListener onReviewListener = new OnReviewListener() {
         @Override
         public void onDelete(ReviewInfo reviewInfo) {
@@ -197,60 +247,91 @@ public class HomeFragment extends Fragment {
 
     private void reviewUpdates() {
         isUpdating = true;
-        CollectionReference collectionReference = db.collection("reviews");
+        final CollectionReference collectionReference = db.collection("reviews");
         final int review_size = reviewList.size();
         Date date = review_size == 0 ? new Date() : reviewList.get(review_size - 1).getCreatedAt();
-        collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).whereLessThan("createdAt", date).limit(10).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        long likeNum = review_size == 0 ? 200000 : reviewList.get(review_size - 1).getLikeNum();
+        if (isLatest) {
+            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING)
+                    .whereLessThan("createdAt", date).limit(10).get()
+                    .addOnCompleteListener(onCompleteListener);
+        } else {
+            if (lastVisible == null) {
+                collectionReference.orderBy("likeNum", Query.Direction.DESCENDING)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            int unknown_num = 0;
-                            ArrayList<ReviewInfo> unknown = new ArrayList<>(); // 알 수 없는 유저의 아이디 -> reviewList의 인덱스
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                ReviewInfo review;
-                                String writer = document.getData().get("writer").toString();
-                                if (userInfos.containsKey(writer)) { // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재함
-                                    review = new ReviewInfo(
-                                            document.getData().get("title").toString(),
-                                            document.getData().get("userComment").toString(),
-                                            (ArrayList<String>) document.getData().get("photos"),
-                                            userInfos.get(writer),
-                                            writer,
-                                            new Date(document.getDate("createdAt").getTime()),
-                                            document.getId(),
-                                            (Map<String, Boolean>)document.get("like"),
-                                            document.getLong("likeNum"),
-                                            (ArrayList<String>) document.getData().get("tags"),
-                                            document.getDouble("rating"),
-                                            document.getData().get("restaurantId").toString());
-                                    reviewList.add(review);
-                                } else {    // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재하지 않음 -> 일단 userinfo는 생략
-                                    review = new ReviewInfo(
-                                            document.getData().get("title").toString(),
-                                            document.getData().get("userComment").toString(),
-                                            (ArrayList<String>) document.getData().get("photos"),
-                                            null,
-                                            writer,
-                                            new Date(document.getDate("createdAt").getTime()),
-                                            document.getId(),
-                                            (Map<String, Boolean>)document.get("like"),
-                                            document.getLong("likeNum"),
-                                            (ArrayList<String>) document.getData().get("tags"),
-                                            document.getDouble("rating"),
-                                            document.getData().get("restaurantId").toString());
-                                    reviewList.add(review);
-                                    unknown.add(review);
-                                    unknown_num++;
-                                }
-                            }
-                            getUserInfo(unknown, unknown_num);
-                        } else {
-                            Log.d("test123", "Error getting documents: ", task.getException());
-                        }
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        lastVisible = queryDocumentSnapshots.getDocuments()
+                                .get(queryDocumentSnapshots.size() - 1);
                     }
-                });
+                }).addOnCompleteListener(onCompleteListener);
+            } else {
+                collectionReference.orderBy("likeNum", Query.Direction.DESCENDING)
+                        .startAfter(lastVisible)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.size() != 0) {
+                            lastVisible = queryDocumentSnapshots.getDocuments()
+                                    .get(queryDocumentSnapshots.size() - 1);
+                        }
+
+                    }
+                }).addOnCompleteListener(onCompleteListener);
+            }
+
+        }
     }
+
+    private OnCompleteListener<QuerySnapshot> onCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                int unknown_num = 0;
+                ArrayList<ReviewInfo> unknown = new ArrayList<>(); // 알 수 없는 유저의 아이디 -> reviewList의 인덱스
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    ReviewInfo review;
+                    String writer = document.getData().get("writer").toString();
+                    if (userInfos.containsKey(writer)) { // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재함
+                        review = new ReviewInfo(
+                                document.getData().get("title").toString(),
+                                document.getData().get("userComment").toString(),
+                                (ArrayList<String>) document.getData().get("photos"),
+                                userInfos.get(writer),
+                                writer,
+                                new Date(document.getDate("createdAt").getTime()),
+                                document.getId(),
+                                (Map<String, Boolean>)document.get("like"),
+                                document.getLong("likeNum"),
+                                (ArrayList<String>) document.getData().get("tags"),
+                                document.getDouble("rating"),
+                                document.getData().get("restaurantId").toString());
+                        reviewList.add(review);
+                    } else {    // 새로 받은 리뷰의 유저 아이디가 기존 리스트에 존재하지 않음 -> 일단 userinfo는 생략
+                        review = new ReviewInfo(
+                                document.getData().get("title").toString(),
+                                document.getData().get("userComment").toString(),
+                                (ArrayList<String>) document.getData().get("photos"),
+                                null,
+                                writer,
+                                new Date(document.getDate("createdAt").getTime()),
+                                document.getId(),
+                                (Map<String, Boolean>)document.get("like"),
+                                document.getLong("likeNum"),
+                                (ArrayList<String>) document.getData().get("tags"),
+                                document.getDouble("rating"),
+                                document.getData().get("restaurantId").toString());
+                        reviewList.add(review);
+                        unknown.add(review);
+                        unknown_num++;
+                    }
+                }
+                getUserInfo(unknown, unknown_num);
+            } else {
+                Log.d("test123", "Error getting documents: ", task.getException());
+            }
+        }
+    };
 
     // 새로 로딩한 리뷰의 유저 아이디를 모르는 경우, 디비에서 받아와서 넣어줌
     // unknown값은 인덱스값임
