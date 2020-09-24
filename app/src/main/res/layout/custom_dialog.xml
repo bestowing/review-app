@@ -144,13 +144,13 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:text="위치를 잘 모르겠나요?"
-        android:textSize="12sp"
         android:textColor="@color/baseGray"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/submit_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -189,7 +189,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip7"
+                android:id="@+id/chip4"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                 android:text="마로니에"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip4"
+                android:id="@+id/chip5"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
                 android:text="대명거리"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip5"
+                android:id="@+id/chip6"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
                 android:text="소나무길"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip6"
+                android:id="@+id/chip7"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

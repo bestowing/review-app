@@ -52,26 +52,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HomeFragment extends Fragment {
+    //DB
     private FirebaseFirestore db;
     private StorageReference storageRef;
-    private ReviewAdapter reviewAdapter;
-    private RecyclerView recyclerView;
-    private ArrayList<ReviewInfo> reviewList;
-    private HashMap<String, UserInfo> userInfos; // 유저 ID를 key, 유저 정보를 value로 저장하는 자료구조
+    private DocumentSnapshot lastVisible;
+
+    // VIEW
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout search_option;
+    private ReviewAdapter reviewAdapter;
+    private RecyclerView recyclerView;
     private TextView option_latest;
     private TextView option_popular;
 
-    DocumentSnapshot lastVisible;
-
-    public HomeFragment() {}
+    // DATA
+    private ArrayList<ReviewInfo> reviewList;
+    private HashMap<String, UserInfo> userInfos; // 유저 ID를 key, 유저 정보를 value로 저장하는 자료구조
+    private HashMap<CustomDialog.Positions, Boolean> positionFilter;
 
     private boolean isUpdating;
     private boolean isVanishing;
     int successCount;
     private int downloadCnt;
     private boolean isLatest;
+
+    public HomeFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,12 +94,22 @@ public class HomeFragment extends Fragment {
         option_popular = rootView.findViewById(R.id.option_popular);
         option_latest.setOnClickListener(onClickListener);
         option_popular.setOnClickListener(onClickListener);
+        //ToDo: 유저가 설정한 필터링 설정을 기기에 저장하기
+        positionFilter = new HashMap<CustomDialog.Positions, Boolean>();
+        positionFilter.put(CustomDialog.Positions.정문, true);
         rootView.findViewById(R.id.selected_position).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomDialog dialog = new CustomDialog(HomeActivity.mContext, R.style.PopupTheme);
+                final CustomDialog dialog = new CustomDialog(HomeActivity.mContext, R.style.PopupTheme);
+                dialog.setFilters(positionFilter);
                 dialog.getWindow().setGravity(Gravity.BOTTOM);
                 dialog.show();
+                dialog.setDialogResult(new CustomDialog.OnMyDialogResult() {
+                    @Override
+                    public void finish(HashMap<CustomDialog.Positions, Boolean> result) {
+                        dialog.dismiss();
+                    }
+                });
             }
         });
         recyclerView = rootView.findViewById(R.id.review_item_view);
@@ -137,7 +152,6 @@ public class HomeFragment extends Fragment {
 
                             }
                         });
-                        //search_option.setAnimation(animation);
                         search_option.startAnimation(animation);
                     }
                 } else if (dy < -10) {
@@ -160,6 +174,7 @@ public class HomeFragment extends Fragment {
             public void onRefresh() {
                 reviewList.clear();
                 userInfos.clear();
+                lastVisible = null;
                 reviewAdapter.notifyDataSetChanged();
                 reviewUpdates();
             }
