@@ -24,9 +24,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="23sp"
+                android:textStyle="bold"
                 android:textColor="@color/colorBaseBlack"
                 android:includeFontPadding="false"
-                android:text="마이 페이지" />
+                android:text="내정보" />
 
         </FrameLayout>
 
