@@ -22,6 +22,7 @@ import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.Utility;
 import com.bestowing.restaurant.home.adapter.CommentAdapter;
 import com.bestowing.restaurant.home.adapter.ViewPagerAdapter;
+import com.bestowing.restaurant.home.listener.OnCommentListener;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,7 +48,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReviewDetailActivity extends AppCompatActivity {
     private Utility utility;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private String TAG = "ReviewDetailActivity";
     private FirebaseFirestore db;
 
     private CommentAdapter commentAdapter;
@@ -67,13 +67,14 @@ public class ReviewDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review_detail);
         utility = new Utility();
         commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(commentList, this);
+        reviewInfo = (ReviewInfo)getIntent().getSerializableExtra("reviewInfo");
+        commentAdapter = new CommentAdapter(commentList, this, reviewInfo, HomeActivity.mContext.user.getUid());
+        commentAdapter.setOnCommentListener(onCommentListener);
         userInfos = new HashMap<>();
         db = FirebaseFirestore.getInstance();
 
         comments_nbr = findViewById(R.id.comments_nbr);
 
-        reviewInfo = (ReviewInfo)getIntent().getSerializableExtra("reviewInfo");
         // 사진
         ArrayList<String> photos = null;
         try {
@@ -190,6 +191,21 @@ public class ReviewDetailActivity extends AppCompatActivity {
         commentUpdates();
     }
 
+    private OnCommentListener onCommentListener = new OnCommentListener() {
+        @Override
+        public void onDelete(CommentInfo commentInfo) {
+            commentList.remove(commentInfo);
+            commentAdapter.notifyDataSetChanged();
+            comments_nbr.setText(Integer.toString(commentList.size()));
+        }
+
+        @Override
+        public void onModify() {}
+
+        @Override
+        public void onLike(int position, boolean is_like) {}
+    };
+
     private void checkUpload() {
         final String comment = input_form.getText().toString();
         if (comment.length() == 0) {
@@ -202,10 +218,12 @@ public class ReviewDetailActivity extends AppCompatActivity {
         final DocumentReference documentReference = firebaseFirestore.collection("reviews").document(reviewInfo.getId()); // 현재 리뷰의 아이디값을 받음
         final Date date = new Date();
         final CommentInfo commentInfo = new CommentInfo(comment, null, user.getUid(), date, null);
-        documentReference.collection("comments").add(commentInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        documentReference.collection("comments").add(commentInfo)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 showToast("댓글을 남겼어요.");
+                commentInfo.setId(documentReference.getId());
                 commentInfo.setUserInfo(HomeActivity.mContext.getMyInfo());
                 commentList.add(commentInfo);
                 completeUpdateSign();

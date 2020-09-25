@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.bestowing.restaurant.home.adapter.ReviewAdapter;
+import com.bestowing.restaurant.home.listener.OnCommentListener;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,6 +21,8 @@ import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Comment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +30,7 @@ import java.util.Map;
 public class FirebaseHelper {
     private Activity activity;
     private OnReviewListener reviewListener;
+    private OnCommentListener commentListener;
     private int cnt;
     private final FirebaseFirestore db;
     private boolean is_like;
@@ -36,8 +40,17 @@ public class FirebaseHelper {
         db = FirebaseFirestore.getInstance();
     }
 
+    public void setOnCommentListener(OnCommentListener commentListener) {
+        this.commentListener = commentListener;
+    }
+
     public void setOnPostListener(OnReviewListener reviewListener) {
         this.reviewListener = reviewListener;
+    }
+
+    public void deleteStorage(final ReviewInfo reviewInfo, final CommentInfo commentInfo) {
+        // 아직 댓글에는 사진이 없다고 가정함
+        deleteStore(reviewInfo.getId(), commentInfo.getId(), commentInfo);
     }
 
     public void deleteStorage(final ReviewInfo reviewInfo) {
@@ -117,6 +130,25 @@ public class FirebaseHelper {
                     public void onFailure(@NonNull Exception e) {
                         Log.d("debugReviewAdapter", e.getMessage());
                         Toast.makeText(activity, "오류가 발생했어요.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void deleteStore(final String reviewId, final String commentId, final CommentInfo commentInfo) {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("reviews").document(reviewId).collection("comments").document(commentId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        showToast("댓글을 삭제했습니다.");
+                        commentListener.onDelete(commentInfo);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showToast("댓글을 삭제하지 못했습니다.");
                     }
                 });
     }
