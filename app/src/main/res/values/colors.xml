@@ -5,4 +5,5 @@
     <color name="navBackground">#f7fdff</color>
     <color name="baseGray">#808080</color>
     <color name="pointBlue">#1a73ff</color>
+    <color name="categoryTitle">#414042</color>
 </resources>
