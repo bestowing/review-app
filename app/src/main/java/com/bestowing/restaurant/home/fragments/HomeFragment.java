@@ -172,6 +172,8 @@ public class HomeFragment extends Fragment {
             }
         });
         swipeRefreshLayout = rootView.findViewById(R.id.swipeToRefresh);
+        int top_of_padding = 150;
+        swipeRefreshLayout.setProgressViewOffset(false, 0, top_of_padding);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() { // 기존 데이터를 버리고 초기화
             @Override
             public void onRefresh() {
