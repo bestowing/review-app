@@ -57,9 +57,18 @@ public class MyViewPager extends ViewPager {
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+        void onItemLongClick(int position);
     }
 
     private class TapGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if(mOnItemClickListener != null) {
+                mOnItemClickListener.onItemLongClick(getCurrentItem());
+            }
+            super.onLongPress(e);
+        }
+
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             if(mOnItemClickListener != null) {

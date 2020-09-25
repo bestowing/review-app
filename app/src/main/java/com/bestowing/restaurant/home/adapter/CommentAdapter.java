@@ -19,9 +19,7 @@ import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.Utility;
 import com.bumptech.glide.Glide;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -62,7 +60,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public CommentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comments, parent, false);
         final CommentAdapter.ViewHolder viewHolder = new CommentAdapter.ViewHolder(cardView);
-
         cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -117,7 +114,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         });
 
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.review, popup.getMenu());
+        inflater.inflate(R.menu.my_review, popup.getMenu());
         popup.show();
     }
 }

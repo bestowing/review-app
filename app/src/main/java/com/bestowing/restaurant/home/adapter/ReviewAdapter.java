@@ -3,14 +3,12 @@ package com.bestowing.restaurant.home.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,33 +21,14 @@ import com.bestowing.restaurant.FirebaseHelper;
 import com.bestowing.restaurant.MyViewPager;
 import com.bestowing.restaurant.R;
 import com.bestowing.restaurant.ReviewInfo;
-import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.Utility;
-import com.bestowing.restaurant.home.HomeActivity;
 import com.bestowing.restaurant.home.ReviewDetailActivity;
 import com.bestowing.restaurant.home.WriteReviewActivity;
 import com.bestowing.restaurant.home.listener.OnReviewListener;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Transaction;
 import com.pm10.library.CircleIndicator;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
     private ArrayList<ReviewInfo> mDataset;
@@ -90,11 +69,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     public ReviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review, parent, false);
         final ViewHolder viewHolder = new ViewHolder(cardView);
-        MyViewPager myViewPager = cardView.findViewById(R.id.viewPager);
+        final MyViewPager myViewPager = cardView.findViewById(R.id.viewPager);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //activity.getFragmentManager();
                 Intent intent = new Intent(activity, ReviewDetailActivity.class);
                 intent.putExtra("reviewInfo", mDataset.get(viewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
@@ -106,6 +84,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 Intent intent = new Intent(activity, ReviewDetailActivity.class);
                 intent.putExtra("reviewInfo", mDataset.get(viewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(int position) {
+                showPopup(myViewPager, viewHolder.getAdapterPosition());
             }
         });
         cardView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -132,17 +115,17 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         });
         return viewHolder;
     }
-    
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         CardView cardView = holder.cardView;
-        TextView writer_nickname = cardView.findViewById(R.id.writer_nickname);
-        CircleImageView writer_profile = cardView.findViewById(R.id.writer_profile);
+        //TextView writer_nickname = cardView.findViewById(R.id.writer_nickname);
+        //CircleImageView writer_profile = cardView.findViewById(R.id.writer_profile);
         final ImageView like = cardView.findViewById(R.id.like);
         final TextView likeNum = cardView.findViewById(R.id.like_num);
         TextView title = cardView.findViewById(R.id.title);
         //TextView user_comment = cardView.findViewById(R.id.user_comment);
-        TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
+        //TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
         MyViewPager viewPager = cardView.findViewById(R.id.viewPager);
         TextView tag1 = cardView.findViewById(R.id.tag1);
         TextView tag2 = cardView.findViewById(R.id.tag2);
@@ -252,26 +235,47 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     }
 
     private void showPopup(View v, final int position) {
+        //MY_REVIEW_OPT
         PopupMenu popup = new PopupMenu(activity, v);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.modify:
-                        startNewActivity(WriteReviewActivity.class, mDataset.get(position));
-                        return true;
-                    case R.id.delete:
-                        firebaseHelper.deleteStorage(mDataset.get(position));
-                        return true;
-                    default:
-                        return false;
+        if (mDataset.get(position).getWriter().equals(myId)) {
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.modify:
+                            startNewActivity(WriteReviewActivity.class, mDataset.get(position));
+                            return true;
+                        case R.id.delete:
+                            firebaseHelper.deleteStorage(mDataset.get(position));
+                            return true;
+                        case R.id.report:
+                            Toast.makeText(activity, "신고가 접수되었어요.", Toast.LENGTH_SHORT).show();
+                            return true;
+                        default:
+                            return false;
+                    }
                 }
-            }
-        });
-
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.review, popup.getMenu());
-        popup.show();
+            });
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.my_review, popup.getMenu());
+            popup.show();
+        } else {
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.report:
+                            Toast.makeText(activity, "신고가 접수되었어요.", Toast.LENGTH_SHORT).show();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            });
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.other_review, popup.getMenu());
+            popup.show();
+        }
     }
 
     private void startNewActivity(Class c, ReviewInfo reviewInfo) {
