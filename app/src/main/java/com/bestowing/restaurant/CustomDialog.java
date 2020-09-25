@@ -75,6 +75,10 @@ public class CustomDialog extends Dialog {
                 for (Chip chip : chips) {
                     if (chip.isChecked()) {
                         mFilter.put(positions[chips.indexOf(chip)], true);
+                    } else {
+                        if (mFilter.containsKey(positions[chips.indexOf((chip))])) {
+                            mFilter.remove(positions[chips.indexOf((chip))]);
+                        }
                     }
                 }
                 if( mDialogResult != null ){

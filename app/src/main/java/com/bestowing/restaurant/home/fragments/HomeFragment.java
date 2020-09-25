@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView option_latest;
     private TextView option_popular;
+    private TextView selected_position;
 
     // DATA
     private ArrayList<ReviewInfo> reviewList;
@@ -95,9 +96,10 @@ public class HomeFragment extends Fragment {
         option_latest.setOnClickListener(onClickListener);
         option_popular.setOnClickListener(onClickListener);
         //ToDo: 유저가 설정한 필터링 설정을 기기에 저장하기
-        positionFilter = new HashMap<CustomDialog.Positions, Boolean>();
+        positionFilter = new HashMap<>();
         positionFilter.put(CustomDialog.Positions.정문, true);
-        rootView.findViewById(R.id.selected_position).setOnClickListener(new View.OnClickListener() {
+        selected_position = rootView.findViewById(R.id.selected_position);
+        selected_position.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final CustomDialog dialog = new CustomDialog(HomeActivity.mContext, R.style.PopupTheme);
@@ -108,6 +110,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void finish(HashMap<CustomDialog.Positions, Boolean> result) {
                         dialog.dismiss();
+                        setFilterText(result);
                     }
                 });
             }
@@ -181,6 +184,36 @@ public class HomeFragment extends Fragment {
         });
         reviewUpdates();
         return rootView;
+    }
+
+    private void setFilterText(HashMap<CustomDialog.Positions, Boolean> result) {
+        positionFilter = result;
+        final int filterSize = positionFilter.size();
+        String text = "";
+        if (filterSize == 7) {
+            text = "학교와 혜화역";
+        } else if (filterSize == 1) {
+            if (positionFilter.containsKey(CustomDialog.Positions.정문) ||
+                    positionFilter.containsKey(CustomDialog.Positions.쪽문) ||
+                    positionFilter.containsKey(CustomDialog.Positions.철문)) {
+                text = "성균관대학교 ";
+            }
+            for (CustomDialog.Positions position : positionFilter.keySet()) {
+                text += position.toString();
+            }
+        } else {
+            if (positionFilter.containsKey(CustomDialog.Positions.정문) && positionFilter.containsKey(CustomDialog.Positions.철문) && positionFilter.containsKey(CustomDialog.Positions.쪽문)) {
+                text = "성균관대학교";
+            } else if (positionFilter.containsKey(CustomDialog.Positions.대명거리) &&
+                    positionFilter.containsKey(CustomDialog.Positions.마로니에) &&
+                    positionFilter.containsKey(CustomDialog.Positions.소나무길) &&
+                    positionFilter.containsKey(CustomDialog.Positions.혜화로터리)) {
+                text = "혜화역";
+            } else {
+                text = "설정하신 곳";
+            }
+        }
+        selected_position.setText(text);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
