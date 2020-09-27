@@ -19,6 +19,7 @@ import com.bestowing.restaurant.UserInfo;
 import com.bestowing.restaurant.auth.LoginActivity;
 import com.bestowing.restaurant.home.fragments.HomeFragment;
 import com.bestowing.restaurant.home.fragments.MyPageFragment;
+import com.bestowing.restaurant.home.fragments.RankFragment;
 import com.bestowing.restaurant.home.fragments.StoreListFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -34,8 +35,6 @@ import com.google.firebase.firestore.Source;
 
 public class HomeActivity extends AppCompatActivity {
     private final int REQUEST_IS_REVIEW_ADDED = 1;
-    private final int REQUEST_UPDATE_INFO = 2;
-    private final int RESULT_UPDATE_OK = 3;
 
     public FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();               // Auth 유저 정보
     private UserInfo myInfo;
@@ -48,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     private FragmentManager manager;
     private HomeFragment homeFragment;
     private StoreListFragment storeListFragment;
+    private RankFragment rankFragment;
     protected MyPageFragment myPageFragment;
 
     @Override
@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         home_btn = findViewById(R.id.home_btn);
         home_btn.setImageResource(R.drawable.ic_home_selected);
         category_btn = findViewById(R.id.category_btn);
+        rank_btn = findViewById(R.id.rank_btn);
         my_page_btn = findViewById(R.id.my_page_btn);
         write_review_btn = findViewById(R.id.write_review_btn);
         setMyInfoFromServer(); // 최초 실행시에만 서버에서 정보를 받아옴
@@ -67,14 +68,16 @@ public class HomeActivity extends AppCompatActivity {
     private void setFragments() {
         homeFragment = new HomeFragment();
         storeListFragment = new StoreListFragment();
+        rankFragment = new RankFragment();
         myPageFragment = new MyPageFragment();
         manager.beginTransaction().add(R.id.frameLayout, homeFragment)
                 .add(R.id.frameLayout, storeListFragment).hide(storeListFragment)
+                .add(R.id.frameLayout, rankFragment).hide(rankFragment)
                 .add(R.id.frameLayout, myPageFragment).hide(myPageFragment)
                 .commit();
-
         category_btn.setOnClickListener(bottomBarClickListener);
         home_btn.setOnClickListener(bottomBarClickListener);
+        rank_btn.setOnClickListener(bottomBarClickListener);
         my_page_btn.setOnClickListener(bottomBarClickListener);
         write_review_btn.setOnClickListener(onClickListener);
     }
@@ -84,21 +87,31 @@ public class HomeActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.home_btn:
-                    manager.beginTransaction().hide(storeListFragment).hide(myPageFragment).show(homeFragment).commit();
+                    manager.beginTransaction().hide(storeListFragment).hide(rankFragment).hide(myPageFragment).show(homeFragment).commit();
                     home_btn.setImageResource(R.drawable.ic_home_selected);
                     category_btn.setImageResource(R.drawable.ic_restaurant);
+                    rank_btn.setImageResource(R.drawable.ic_rank);
                     my_page_btn.setImageResource(R.drawable.ic_settings);
                     break;
                 case R.id.category_btn:
-                    manager.beginTransaction().hide(homeFragment).hide(myPageFragment).show(storeListFragment).commit();
+                    manager.beginTransaction().hide(homeFragment).hide(rankFragment).hide(myPageFragment).show(storeListFragment).commit();
                     home_btn.setImageResource(R.drawable.ic_home);
                     category_btn.setImageResource(R.drawable.ic_restaurant_selected);
+                    rank_btn.setImageResource(R.drawable.ic_rank);
                     my_page_btn.setImageResource(R.drawable.ic_settings);
-                    break ;
-                case R.id.my_page_btn :
-                    manager.beginTransaction().hide(storeListFragment).hide(homeFragment).show(myPageFragment).commit();
+                    break;
+                case R.id.rank_btn:
+                    manager.beginTransaction().hide(homeFragment).hide(storeListFragment).hide(myPageFragment).show(rankFragment).commit();
                     home_btn.setImageResource(R.drawable.ic_home);
                     category_btn.setImageResource(R.drawable.ic_restaurant);
+                    rank_btn.setImageResource(R.drawable.ic_rank_selected);
+                    my_page_btn.setImageResource(R.drawable.ic_settings);
+                    break;
+                case R.id.my_page_btn :
+                    manager.beginTransaction().hide(homeFragment).hide(storeListFragment).hide(rankFragment).show(myPageFragment).commit();
+                    home_btn.setImageResource(R.drawable.ic_home);
+                    category_btn.setImageResource(R.drawable.ic_restaurant);
+                    rank_btn.setImageResource(R.drawable.ic_rank);
                     my_page_btn.setImageResource(R.drawable.ic_settings_selected);
                     break;
             }
